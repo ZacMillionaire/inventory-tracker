@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/Tests/">
+    <Project Path="InventorySystem.Tests.Api/InventorySystem.Tests.Api.csproj" />
+  </Folder>
+  <Project Path="InventorySystem.Data/InventorySystem.Data.csproj" />
+  <Project Path="InventorySystem/InventorySystem.csproj" />
+</Solution>
