@@ -1,7 +1,10 @@
 ﻿using System.ComponentModel;
+using System.Data;
 using System.Runtime.CompilerServices;
 using InventorySystem.Data.Entities;
+using InventorySystem.Data.Enums;
 using InventorySystem.Data.Migrations;
+using InventorySystem.Data.Models;
 using Microsoft.Data.Sqlite;
 
 namespace InventorySystem.Data;
@@ -13,9 +16,18 @@ public class DatabaseContext
 	[Description("Used for testing")]
 	internal readonly string DatabaseLocation;
 
+	[Description("Used for testing")]
+	internal SqliteConnection Connection => _connection;
+
 	public DatabaseContext(string connectionString)
 	{
 		_connection = new SqliteConnection(connectionString);
+
+		_connection.Open();
+		DatabaseLocation = _connection.DataSource;
+		_connection.Close();
+
+		RunMigrations();
 	}
 
 	private void RunMigrations()
@@ -31,16 +43,16 @@ public class DatabaseContext
 
 	internal EntityAttribute CreateEntity(EntityAttribute entityAttribute)
 	{
-		try
+		return RunInConnection(() =>
 		{
 			_connection.Open();
 
-			var insertCommand = _connection.CreateCommand();
+			using var insertCommand = _connection.CreateCommand();
 			insertCommand.CommandText = """
-			                            INSERT INTO Attributes (Id, Name, KeyName, Type) VALUES ($Id, $name, $keyName, $type) Returning RowId
+			                            INSERT INTO Attributes (Id, Name, KeyName, Type) VALUES ($id, $name, $keyName, $type) Returning RowId
 			                            """;
 			insertCommand.Parameters.AddRange([
-				new SqliteParameter("id", entityAttribute.Id),
+				new SqliteParameter("id", entityAttribute.Id.ToString()),
 				new SqliteParameter("name", entityAttribute.Name),
 				new SqliteParameter("keyName", entityAttribute.KeyName),
 				new SqliteParameter("type", entityAttribute.Type),
@@ -49,6 +61,70 @@ public class DatabaseContext
 			var insertedId = insertCommand.ExecuteScalar();
 
 			return entityAttribute;
+		});
+	}
+
+	internal List<AttributeDto> GetAttributes(int page = 1, int perPage = 25)
+	{
+		return RunInConnection(() =>
+		{
+			using var queryCommand = _connection.CreateCommand();
+			queryCommand.CommandText = """
+			                           SELECT Id, Name, KeyName, Type 
+			                           FROM Attributes
+			                           LIMIT $perPage
+			                           OFFSET $page
+			                           """;
+			queryCommand.Parameters.AddRange([
+				new SqliteParameter("perPage", perPage),
+				new SqliteParameter("page", page * perPage - perPage)
+			]);
+
+
+			var attributes = new List<AttributeDto>();
+			var attributeReader = queryCommand.ExecuteReader();
+
+			while (attributeReader.Read())
+			{
+				var row = new AttributeDto()
+				{
+					Id = attributeReader.GetGuid("Id"),
+					Name = attributeReader.GetString("Name"),
+					KeyName = attributeReader.GetString("KeyName"),
+					Type = Enum.Parse<AttributeType>(attributeReader.GetString("Type"))
+				};
+
+				attributes.Add(row);
+			}
+
+			return attributes;
+		});
+	}
+
+	public bool AttributeExistsByName(string attributeName)
+	{
+		return RunInConnection(() =>
+		{
+			using var queryCommand = _connection.CreateCommand();
+			queryCommand.CommandText = """
+			                           SELECT 1 
+			                           FROM Attributes
+			                           WHERE Name = $name
+			                           """;
+			queryCommand.Parameters.AddRange([
+				new SqliteParameter("name", attributeName),
+			]);
+
+			return queryCommand.ExecuteScalar() != null;
+		});
+	}
+
+	private T RunInConnection<T>(Func<T> func)
+	{
+		try
+		{
+			_connection.Open();
+			return func();
 		}
 		finally
 		{
