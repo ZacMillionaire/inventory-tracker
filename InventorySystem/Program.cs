@@ -13,6 +13,8 @@ public class InventorySystemApi
 	{
 		var builder = WebApplication.CreateSlimBuilder(args);
 
+		builder.Services.AddSingleton(TimeProvider.System);
+
 		builder.Services.ConfigureHttpJsonOptions(options =>
 		{
 			options.SerializerOptions.TypeInfoResolverChain.Add(AttributeApiSerializerContext.Default);

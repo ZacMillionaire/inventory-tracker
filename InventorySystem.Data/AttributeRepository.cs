@@ -5,12 +5,13 @@ namespace InventorySystem.Data;
 
 public class AttributeRepository
 {
-	private int _idCounter = 1;
 	private readonly List<EntityAttribute> _attributes = [];
 	private readonly DatabaseContext _database;
+	private readonly TimeProvider _timeProvider;
 
-	public AttributeRepository(DatabaseContext dataStorge)
+	public AttributeRepository(TimeProvider timeProvider, DatabaseContext dataStorge)
 	{
+		_timeProvider = timeProvider;
 		_database = dataStorge;
 	}
 
@@ -33,7 +34,7 @@ public class AttributeRepository
 			Name = attribute.Name,
 			Type = attribute.Type,
 			KeyName = attribute.KeyName,
-			Id = _idCounter++,
+			Id = Guid.CreateVersion7(_timeProvider.GetUtcNow())
 		};
 
 		_database.CreateEntity(a);

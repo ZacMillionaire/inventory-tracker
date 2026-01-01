@@ -1,4 +1,7 @@
-﻿using InventorySystem.Data.Entities;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using InventorySystem.Data.Entities;
+using InventorySystem.Data.Migrations;
 using Microsoft.Data.Sqlite;
 
 namespace InventorySystem.Data;
@@ -7,61 +10,49 @@ public class DatabaseContext
 {
 	private readonly SqliteConnection _connection;
 
+	[Description("Used for testing")]
+	internal readonly string DatabaseLocation;
+
 	public DatabaseContext(string connectionString)
 	{
 		_connection = new SqliteConnection(connectionString);
-		
-		_connection.Open();
+	}
 
-		var a = _connection.CreateCommand();
-		a.CommandText = """
-		                create table Attributes
-		                (
-		                    Id      integer
-		                        constraint Attributes_pk
-		                            primary key autoincrement,
-		                    Name    TEXT    not null,
-		                    KeyName TEXT,
-		                    Type    integer not null
-		                );
-
-		                create unique index Idx_KeyName
-		                    on Attributes (KeyName);
-
-		                create index Idx_Name
-		                    on Attributes (Name);
-
-		                create index Idx_Type
-		                    on Attributes (Type);
-		                """;
-		a.ExecuteNonQuery();
-		_connection.Close();
+	private void RunMigrations()
+	{
+		// TODO: store migrations in a table, only run missing migrations
+		AttributesTableMigration.Up(_connection);
 	}
 
 	public void Seed(Action<SqliteConnection> seed)
 	{
-		seed(_connection);
+		//seed(_connection);
 	}
 
 	internal EntityAttribute CreateEntity(EntityAttribute entityAttribute)
 	{
-		//_connection.Insert(entityAttribute);
-		_connection.Open();
+		try
+		{
+			_connection.Open();
 
-		var insertCommand = _connection.CreateCommand();
-		insertCommand.CommandText = """
-		                            INSERT INTO Attributes (Name, KeyName, Type) VALUES ($name, $keyName, $type) Returning RowId
-		                            """;
-		insertCommand.Parameters.AddRange([
-			new SqliteParameter("$name", entityAttribute.Name),
-			new SqliteParameter("keyName", entityAttribute.KeyName),
-			new SqliteParameter("type", entityAttribute.Type),
-		]);
-		
-		var insertedId = insertCommand.ExecuteScalar();
-		
-		_connection.Close();
+			var insertCommand = _connection.CreateCommand();
+			insertCommand.CommandText = """
+			                            INSERT INTO Attributes (Id, Name, KeyName, Type) VALUES ($Id, $name, $keyName, $type) Returning RowId
+			                            """;
+			insertCommand.Parameters.AddRange([
+				new SqliteParameter("id", entityAttribute.Id),
+				new SqliteParameter("name", entityAttribute.Name),
+				new SqliteParameter("keyName", entityAttribute.KeyName),
+				new SqliteParameter("type", entityAttribute.Type),
+			]);
 
-		return entityAttribute;
+			var insertedId = insertCommand.ExecuteScalar();
+
+			return entityAttribute;
+		}
+		finally
+		{
+			_connection.Close();
+		}
 	}
 }
