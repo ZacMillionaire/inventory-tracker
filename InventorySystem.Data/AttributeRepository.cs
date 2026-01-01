@@ -5,7 +5,6 @@ namespace InventorySystem.Data;
 
 public class AttributeRepository
 {
-	private readonly List<EntityAttribute> _attributes = [];
 	private readonly DatabaseContext _database;
 	private readonly TimeProvider _timeProvider;
 
@@ -17,7 +16,7 @@ public class AttributeRepository
 
 	public List<AttributeDto> Get()
 	{
-		return _attributes.Select(ToDto).ToList();
+		return _database.GetAttributes();
 	}
 
 	public bool AttributeExistsByName(string attributeName)
@@ -29,7 +28,7 @@ public class AttributeRepository
 	{
 		attribute.KeyName ??= AttributeNameToKeyName(attribute.Name);
 
-		var a = new EntityAttribute()
+		var newAttribute = new EntityAttribute()
 		{
 			Name = attribute.Name,
 			Type = attribute.Type,
@@ -37,9 +36,9 @@ public class AttributeRepository
 			Id = Guid.CreateVersion7(_timeProvider.GetUtcNow())
 		};
 
-		_database.CreateEntity(a);
+		_database.CreateEntity(newAttribute);
 
-		return ToDto(a);
+		return ToDto(newAttribute);
 	}
 
 	private AttributeDto ToDto(EntityAttribute attribute)
