@@ -9,7 +9,7 @@ public class AttributesTableMigration
 		try
 		{
 			connection.Open();
-			var command = connection.CreateCommand();
+			using var command = connection.CreateCommand();
 			command.CommandText = """
 			                      create table IF NOT EXISTS 
 			                      Attributes
@@ -18,7 +18,7 @@ public class AttributesTableMigration
 			                              	  constraint Attributes_pk
 			                                  primary key,
 			                          Name    TEXT	not null,
-			                          KeyName TEXT,
+			                          KeyName TEXT  not null,
 			                          Type    integer not null
 			                      );
 

@@ -22,7 +22,7 @@ public class AttributeRepository
 
 	public bool AttributeExistsByName(string attributeName)
 	{
-		return _attributes.Any(x => x.Name.Equals(attributeName, StringComparison.InvariantCultureIgnoreCase));
+		return _database.AttributeExistsByName(attributeName);
 	}
 
 	public AttributeDto Create(CreateAttributeDto attribute)
