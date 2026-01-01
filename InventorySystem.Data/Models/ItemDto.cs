@@ -18,7 +18,7 @@ public class CreateItemRequestDto
 
 public class AttributeValueDto
 {
-	public int AttributeId { get; set; }
+	public Guid AttributeId { get; set; }
 	public object Value { get; set; }
 }
 
@@ -47,5 +47,5 @@ public class AttributeDto : BaseItemDto
 
 public abstract class BaseItemDto
 {
-	public int Id { get; set; }
+	public Guid Id { get; set; }
 }
