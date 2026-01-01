@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Data;
-using System.Runtime.CompilerServices;
 using InventorySystem.Data.Entities;
 using InventorySystem.Data.Enums;
 using InventorySystem.Data.Migrations;
@@ -46,9 +45,13 @@ public class DatabaseContext
 		return RunInConnection(() =>
 		{
 			using var insertCommand = _connection.CreateCommand();
+
 			insertCommand.CommandText = """
-			                            INSERT INTO Attributes (Id, Name, KeyName, Type) VALUES ($id, $name, $keyName, $type) Returning RowId
+			                            INSERT INTO Attributes (Id, Name, KeyName, Type)
+			                            VALUES ($id, $name, $keyName, $type) 
+			                            Returning RowId
 			                            """;
+
 			insertCommand.Parameters.AddRange([
 				new SqliteParameter("id", entityAttribute.Id.ToString()),
 				new SqliteParameter("name", entityAttribute.Name),
