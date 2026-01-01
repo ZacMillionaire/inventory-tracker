@@ -45,8 +45,6 @@ public class DatabaseContext
 	{
 		return RunInConnection(() =>
 		{
-			_connection.Open();
-
 			using var insertCommand = _connection.CreateCommand();
 			insertCommand.CommandText = """
 			                            INSERT INTO Attributes (Id, Name, KeyName, Type) VALUES ($id, $name, $keyName, $type) Returning RowId

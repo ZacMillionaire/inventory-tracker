@@ -7,14 +7,9 @@ public class DbContextHelper : IDisposable
 {
 	private readonly DatabaseContext _dbcontext;
 
-	public DbContextHelper(string databaseName)
+	public DbContextHelper(string connectionString)
 	{
-		// if (File.Exists(databaseName))
-		// {
-		// 	File.Delete(databaseName);
-		// }
-
-		_dbcontext = new DatabaseContext(databaseName);
+		_dbcontext = new DatabaseContext(connectionString);
 	}
 
 	public DatabaseContext GetContext => _dbcontext;
