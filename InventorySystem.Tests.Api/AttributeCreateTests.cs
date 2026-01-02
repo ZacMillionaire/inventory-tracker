@@ -41,7 +41,7 @@ public sealed class AttributeCreateTests : IDisposable
 		var client = _apiWebApplicationFactory.CreateClient();
 		var ctx = _apiWebApplicationFactory.Context;
 
-		ctx.CreateEntity(new()
+		ctx.Attributes.CreateEntity(new()
 		{
 			Name = "String Attribute",
 			KeyName = "string_attribute",
@@ -94,7 +94,7 @@ public sealed class AttributeCreateTests : IDisposable
 		var client = _apiWebApplicationFactory.CreateClient();
 		var ctx = _apiWebApplicationFactory.Context;
 
-		ctx.CreateEntity(new()
+		ctx.Attributes.CreateEntity(new()
 		{
 			Name = "String Attribute",
 			KeyName = "string_attribute",
