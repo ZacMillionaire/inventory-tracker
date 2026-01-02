@@ -16,12 +16,12 @@ public class AttributeRepository
 
 	public List<AttributeDto> Get()
 	{
-		return _database.GetAttributes();
+		return _database.Attributes.GetAttributes();
 	}
 
 	public bool AttributeExistsByName(string attributeName)
 	{
-		return _database.AttributeExistsByName(attributeName);
+		return _database.Attributes.AttributeExistsByName(attributeName);
 	}
 
 	public AttributeDto Create(CreateAttributeDto attribute)
@@ -36,7 +36,7 @@ public class AttributeRepository
 			Id = Guid.CreateVersion7(_timeProvider.GetUtcNow())
 		};
 
-		_database.CreateEntity(newAttribute);
+		_database.Attributes.CreateEntity(newAttribute);
 
 		return ToDto(newAttribute);
 	}
