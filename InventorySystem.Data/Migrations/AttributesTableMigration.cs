@@ -11,24 +11,24 @@ public class AttributesTableMigration
 			connection.Open();
 			using var command = connection.CreateCommand();
 			command.CommandText = """
-			                      create table IF NOT EXISTS 
-			                      Attributes
+			                      create table IF NOT EXISTS
+			                          Attributes
 			                      (
 			                          Id      TEXT
-			                              	  constraint Attributes_pk
+			                              constraint Attributes_pk
 			                                  primary key,
 			                          Name    TEXT	not null,
 			                          KeyName TEXT  not null,
 			                          Type    integer not null
 			                      );
 
-			                      create unique index IF NOT EXISTS Idx_KeyName
+			                      create unique index IF NOT EXISTS Idx_Attributes_KeyName
 			                          on Attributes (KeyName);
 
-			                      create index IF NOT EXISTS Idx_Name
+			                      create index IF NOT EXISTS Idx_Attributes_Name
 			                          on Attributes (Name);
 
-			                      create index IF NOT EXISTS Idx_Type
+			                      create index IF NOT EXISTS Idx_Attributes_Type
 			                          on Attributes (Type);
 			                      """;
 			command.ExecuteNonQuery();
