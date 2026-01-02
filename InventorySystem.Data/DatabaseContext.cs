@@ -8,18 +8,15 @@ namespace InventorySystem.Data;
 public sealed class DatabaseContext
 {
 	private readonly SqliteConnection _connection;
-
-	[Description("Used for testing")]
-	internal readonly string DatabaseLocation;
-
-	[Description("Used for testing")]
-	internal SqliteConnection Connection => _connection;
+	private readonly TimeProvider _timeProvider;
 
 	public readonly AttributeSet Attributes;
-
-	public DatabaseContext(string connectionString)
+	public readonly ItemSet Items;
+	
+	public DatabaseContext(string connectionString, TimeProvider? timeProvider = null)
 	{
 		_connection = new SqliteConnection(connectionString);
+		_timeProvider = timeProvider ?? TimeProvider.System;
 
 		_connection.Open();
 		DatabaseLocation = _connection.DataSource;
@@ -27,17 +24,30 @@ public sealed class DatabaseContext
 
 		RunMigrations();
 
-		Attributes = new AttributeSet(_connection);
+		Attributes = new AttributeSet(_connection, _timeProvider);
+		Items = new ItemSet(_connection, _timeProvider);
 	}
 
 	private void RunMigrations()
 	{
 		// TODO: store migrations in a table, only run missing migrations
 		AttributesTableMigration.Up(_connection);
+		ItemsTableMigration.Up(_connection);
 	}
 
 	public void Seed(Action<SqliteConnection> seed)
 	{
 		//seed(_connection);
 	}
+
+
+	#region Test Internals
+
+	[Description("Used for testing")]
+	internal readonly string DatabaseLocation;
+
+	[Description("Used for testing")]
+	internal SqliteConnection Connection => _connection;
+
+	#endregion
 }
