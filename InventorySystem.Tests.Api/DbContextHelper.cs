@@ -7,9 +7,9 @@ public class DbContextHelper : IDisposable
 {
 	private readonly DatabaseContext _dbcontext;
 
-	public DbContextHelper(string connectionString)
+	public DbContextHelper(string connectionString, TimeProvider timeProvider)
 	{
-		_dbcontext = new DatabaseContext(connectionString);
+		_dbcontext = new DatabaseContext(connectionString, timeProvider);
 	}
 
 	public DatabaseContext GetContext => _dbcontext;

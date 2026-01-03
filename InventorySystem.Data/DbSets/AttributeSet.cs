@@ -9,10 +9,12 @@ namespace InventorySystem.Data.DbSets;
 public class AttributeSet
 {
 	private readonly SqliteConnection _connection;
+	private readonly TimeProvider _timeProvider;
 
-	internal AttributeSet(SqliteConnection connection)
+	internal AttributeSet(SqliteConnection connection, TimeProvider? timeProvider = null)
 	{
 		_connection = connection;
+		_timeProvider = timeProvider ?? TimeProvider.System;
 	}
 
 	internal EntityAttribute CreateEntity(EntityAttribute entityAttribute)

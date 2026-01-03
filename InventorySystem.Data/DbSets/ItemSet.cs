@@ -19,11 +19,13 @@ public class ItemSet
 	{
 		return RunInConnection(() =>
 		{
+			var now = _timeProvider.GetUtcNow();
 			var newItem = new Item()
 			{
-				Id = Guid.CreateVersion7(_timeProvider.GetUtcNow()),
+				Id = Guid.CreateVersion7(now),
 				Name = name,
-				Description = description
+				Description = description,
+				CreatedUtc = now
 			};
 
 			using var insertCommand = _connection.CreateCommand();
@@ -37,7 +39,7 @@ public class ItemSet
 				new SqliteParameter("id", newItem.Id.ToString()),
 				new SqliteParameter("name", newItem.Name),
 				new SqliteParameter("description", newItem.Description),
-				new SqliteParameter("createdUtc", _timeProvider.GetUtcNow().Ticks),
+				new SqliteParameter("createdUtc", now.Ticks),
 			]);
 
 			insertCommand.ExecuteScalar();

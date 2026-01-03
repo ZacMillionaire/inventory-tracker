@@ -18,6 +18,7 @@ public class InventorySystemApi
 		builder.Services.ConfigureHttpJsonOptions(options =>
 		{
 			options.SerializerOptions.TypeInfoResolverChain.Add(AttributeApiSerializerContext.Default);
+			options.SerializerOptions.TypeInfoResolverChain.Add(ItemApiSerializerContext.Default);
 			options.SerializerOptions.PropertyNameCaseInsensitive = true;
 			options.SerializerOptions.Converters.Add(new JsonStringEnumConverter<AttributeType>());
 		});
@@ -27,7 +28,7 @@ public class InventorySystemApi
 		// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 		builder.Services.AddOpenApi();
 
-		builder.Services.AddSingleton(new ItemRepository());
+		builder.Services.AddSingleton<ItemRepository>();
 		builder.Services.AddSingleton<AttributeRepository>();
 
 		var app = builder.Build();
@@ -37,7 +38,7 @@ public class InventorySystemApi
 			app.MapOpenApi();
 		}
 
-		// ItemApi.AddItemApiRoutes(app);
+		ItemApi.AddItemApiRoutes(app);
 		AttributeApi.AddAttributeApiRoutes(app);
 
 		// Todo[] sampleTodos =

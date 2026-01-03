@@ -2,11 +2,13 @@
 
 namespace InventorySystem.Data.Models;
 
-public class ItemDto : BaseItemDto
+public class ItemDto : BaseDto
 {
 	public required string Name { get; set; }
 	public string? Description { get; set; }
 	public List<AttributeDto> Attributes { get; set; } = [];
+	public DateTimeOffset CreatedUtc { get; set; }
+	public DateTimeOffset? UpdatedUtc { get; set; }
 }
 
 public class CreateItemRequestDto
@@ -34,7 +36,7 @@ public class CreateAttributeDto
 	public required AttributeType Type { get; set; }
 }
 
-public class AttributeDto : BaseItemDto
+public class AttributeDto : BaseDto
 {
 	public required string Name { get; set; }
 	public required string KeyName { get; set; }
@@ -45,7 +47,7 @@ public class AttributeDto : BaseItemDto
 	// public double DoubleValue { get; set; }
 }
 
-public abstract class BaseItemDto
+public abstract class BaseDto
 {
 	public Guid Id { get; set; }
 }

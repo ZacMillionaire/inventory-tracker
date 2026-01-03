@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventorySystem.Apis;
@@ -15,9 +16,13 @@ public class ItemApi
 			.WithName("GetItems");
 
 		apiGroup.MapPost("/Create", (ItemRepository repo, [FromBody] CreateItemRequestDto dto) =>
-			{
-				repo.Create(dto);
-			})
+				repo.Create(dto)
+			)
 			.WithName("CreateItem");
 	}
+}
+
+[JsonSerializable(typeof(CreateItemRequestDto))]
+internal partial class ItemApiSerializerContext : JsonSerializerContext
+{
 }

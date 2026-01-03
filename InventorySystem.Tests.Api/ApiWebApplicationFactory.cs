@@ -28,13 +28,14 @@ public class ApiWebApplicationFactory : WebApplicationFactory<InventorySystemApi
 
 		var connectionString = $"Data Source={_generatedDatabaseFolder}/{DatabaseName ?? Guid.NewGuid().ToString()}.db";
 
-		_context ??= new DbContextHelper(connectionString);
+		_context ??= new DbContextHelper(connectionString, TimeProvider);
 
 		// Is be called after the `ConfigureServices` from the Startup
 		// which allows you to overwrite the DI with mocked instances
 		builder.ConfigureTestServices(services =>
 		{
 			services.AddSingleton(_context.GetContext);
+			services.AddSingleton(TimeProvider);
 		});
 	}
 

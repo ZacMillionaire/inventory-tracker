@@ -12,10 +12,12 @@ public sealed class ItemCreateTests : ApiTestBase
 	[Fact]
 	public async Task POST_CreateItem_WithoutAttributes()
 	{
+		var timeProvider = new TestTimeProvider(DateTimeOffset.Now);
 		var client = ApiWebApplicationFactory
 			.Configure(config =>
 			{
 				config.DatabaseName = "item-tests";
+				config.TimeProvider = timeProvider;
 			})
 			.CreateClient();
 
@@ -26,12 +28,46 @@ public sealed class ItemCreateTests : ApiTestBase
 		});
 		Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-		var body = await ReadResponseJson<AttributeDto>(response);
+		var body = await ReadResponseJson<ItemDto>(response);
 		Assert.NotNull(body);
 		Assert.NotEqual(Guid.Empty, body.Id);
-		Assert.Equal("String Attribute", body.Name);
-		Assert.Equal("string_attribute", body.KeyName);
-		Assert.Equal(AttributeType.String, body.Type);
+		Assert.Equal("Item 1", body.Name);
+		Assert.Equal("A Description", body.Description);
+		Assert.Equal(timeProvider.GetUtcNow(), body.CreatedUtc);
+		Assert.Null(body.UpdatedUtc);
+	}
+
+	[Fact]
+	public async Task POST_CreateItemWithSameName_Should_OK()
+	{
+		var timeProvider = new TestTimeProvider(DateTimeOffset.Now);
+
+		var client = ApiWebApplicationFactory
+			.Configure(config =>
+			{
+				config.DatabaseName = "item-tests";
+				config.TimeProvider = timeProvider;
+			})
+			.CreateClient();
+
+		var context = ApiWebApplicationFactory.Context;
+
+		var item = context.Items.CreateItem("Item 1", "Created First");
+
+		var response = await PostAsJsonAsync(client, "/items/create", new CreateItemRequestDto()
+		{
+			Name = "Item 1",
+			Description = "Created second"
+		});
+		Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+		var body = await ReadResponseJson<ItemDto>(response);
+		Assert.NotNull(body);
+		Assert.NotEqual(Guid.Empty, body.Id);
+		Assert.Equal("Item 1", body.Name);
+		Assert.Equal("Created second", body.Description);
+		Assert.Equal(timeProvider.GetUtcNow(), body.CreatedUtc);
+		Assert.Null(body.UpdatedUtc);
 	}
 }
 
@@ -72,5 +108,17 @@ public class ApiTestBase : IDisposable
 		{
 			ApiWebApplicationFactory.Dispose();
 		}
+	}
+}
+
+internal class TestTimeProvider : TimeProvider
+{
+	private readonly DateTimeOffset _time;
+
+	public override DateTimeOffset GetUtcNow() => _time.UtcDateTime;
+
+	public TestTimeProvider(DateTimeOffset startingTime)
+	{
+		_time = startingTime;
 	}
 }

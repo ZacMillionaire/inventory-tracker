@@ -64,16 +64,12 @@ public class ItemRepository
 	{
 		return new ItemDto()
 		{
+			Id = item.Id,
 			Name = item.Name,
 			Description = item.Description,
 			Attributes = [], // TODO: consolidate the making of Dtos to the attribute itself
-			Id = item.Id
+			CreatedUtc = item.CreatedUtc,
+			UpdatedUtc = item.UpdatedUtc
 		};
 	}
-}
-
-// [JsonSerializable(typeof(AttributeDto))]
-[JsonSerializable(typeof(CreateItemRequestDto))]
-internal partial class ItemApiSerializerContext : JsonSerializerContext
-{
 }
