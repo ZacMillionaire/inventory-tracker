@@ -1,4 +1,5 @@
-﻿using InventorySystem.Data.Entities;
+﻿using System.Data;
+using InventorySystem.Data.Entities;
 using InventorySystem.Data.Models;
 using Microsoft.Data.Sqlite;
 
@@ -62,5 +63,45 @@ public class ItemSet
 		{
 			_connection.Close();
 		}
+	}
+
+	public List<ItemDto> GetItems(int page = 1, int perPage = 25)
+	{
+		return RunInConnection(() =>
+		{
+			using var queryCommand = _connection.CreateCommand();
+			queryCommand.CommandText = """
+			                           SELECT Id, Name, Description, CreatedUtc, UpdatedUtc 
+			                           FROM Items
+			                           LIMIT $perPage
+			                           OFFSET $page
+			                           """;
+			queryCommand.Parameters.AddRange([
+				new SqliteParameter("perPage", perPage),
+				new SqliteParameter("page", page * perPage - perPage)
+			]);
+
+
+			var items = new List<ItemDto>();
+			var attributeReader = queryCommand.ExecuteReader();
+
+			while (attributeReader.Read())
+			{
+				var row = new ItemDto()
+				{
+					Id = attributeReader.GetGuid("Id"),
+					Name = attributeReader.GetString("Name"),
+					Description = attributeReader.GetString("Description"),
+					CreatedUtc = new DateTimeOffset(attributeReader.GetInt64("CreatedUtc"), TimeSpan.Zero),
+					UpdatedUtc = attributeReader.IsDBNull("UpdatedUtc")
+						? null
+						: new DateTimeOffset(attributeReader.GetInt64("UpdatedUtc"), TimeSpan.Zero),
+				};
+
+				items.Add(row);
+			}
+
+			return items;
+		});
 	}
 }

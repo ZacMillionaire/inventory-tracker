@@ -10,9 +10,8 @@ public class ItemApi
 	{
 		var apiGroup = app.MapGroup("/items");
 		apiGroup.MapGet("/", (ItemRepository repo) =>
-			{
-				repo.Get();
-			})
+				repo.Get()
+			)
 			.WithName("GetItems");
 
 		apiGroup.MapPost("/Create", (ItemRepository repo, [FromBody] CreateItemRequestDto dto) =>

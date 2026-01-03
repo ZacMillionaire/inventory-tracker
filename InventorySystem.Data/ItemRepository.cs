@@ -39,7 +39,7 @@ public class ItemRepository
 
 	public List<ItemDto> Get()
 	{
-		return [];
+		return _database.Items.GetItems();
 		// return _items.Select(x => new ItemDto()
 		// 	{
 		// 		Name = x.Name,
