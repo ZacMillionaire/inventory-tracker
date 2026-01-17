@@ -1,6 +1,6 @@
 ﻿//HintName: ItemApiRoutes.Api.g.cs
 using Microsoft.AspNetCore.Builder;
-using Tests.Complex.Namespace;
+using Tests.Complex.Namespace
 public static class WebApplicationExtensions
 {
 	extension(WebApplication app)

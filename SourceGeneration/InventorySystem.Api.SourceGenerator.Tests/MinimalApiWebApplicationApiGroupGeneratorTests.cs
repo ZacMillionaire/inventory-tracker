@@ -6,10 +6,10 @@ namespace InventorySystem.Api.SourceGenerator.Tests;
 
 public class MinimalApiWebApplicationApiGroupGeneratorTests
 {
-	public MinimalApiWebApplicationApiGroupGeneratorTests()
-	{
-		VerifySourceGenerators.Initialize();
-	}
+	// public MinimalApiWebApplicationApiGroupGeneratorTests()
+	// {
+	// 	VerifySourceGenerators.Initialize();
+	// }
 
 	[Fact]
 	public Task GeneratesApiExtensionsCorrectly()
@@ -17,7 +17,7 @@ public class MinimalApiWebApplicationApiGroupGeneratorTests
 		// The source code to test
 		var source = """
 		             using InventorySystem.Core.Api;
-		             namespace Tests
+		             namespace Tests.Complex.Namespace
 		             {
 
 		                 [ApiGroup("items")]
@@ -37,15 +37,14 @@ public class MinimalApiWebApplicationApiGroupGeneratorTests
 	}
 }
 
-// public static class ModuleInitializer
-// {
-// 	[ModuleInitializer]
-// 	public static void Init()
-// 	{
-// 		VerifySourceGenerators.Initialize();
-// 		Verifier.UseProjectRelativeDirectory("TestVerifications");
-// 	}
-// }
+public static class ModuleInitializer
+{
+	[ModuleInitializer]
+	public static void Init()
+	{
+		VerifySourceGenerators.Initialize();
+	}
+}
 
 public static class TestHelper
 {

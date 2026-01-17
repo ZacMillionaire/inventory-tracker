@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace InventorySystem.Api.SourceGenerator;
 
-public static class SourceGenerationHelper
+internal static class SourceGenerationHelper
 {
 	public const string Namespace = "InventorySystem.Core.Api";
 
@@ -56,7 +56,7 @@ public static class SourceGenerationHelper
 }
 
 [Generator]
-public class MinimalApiWebApplicationApiGroupGenerator : IIncrementalGenerator
+internal class MinimalApiWebApplicationApiGroupGenerator : IIncrementalGenerator
 {
 	private static bool IsSyntaxTargetForGeneration(SyntaxNode node)
 		=> node is ClassDeclarationSyntax { AttributeLists.Count: > 0 };
@@ -80,8 +80,12 @@ public class MinimalApiWebApplicationApiGroupGenerator : IIncrementalGenerator
 	{
 		if (apiGroupToGenerate is { } value)
 		{
+			// TODO: look at making a generator that takes a class (with attributes), and generates a partial from it that calls into the instances
+			//  maybe? Not sure on the performance there but whatever
 			var sb = new StringBuilder();
-			sb.AppendLine("public static class WebApplicationExtensions");
+			sb.AppendLine("using Microsoft.AspNetCore.Builder;");
+			sb.AppendLine($"using {value.Namespace};");
+			sb.AppendLine("public static partial class WebApplicationExtensions");
 			sb.AppendLine("{");
 			sb.AppendLine("	extension(WebApplication app)");
 			sb.AppendLine("	{");
@@ -123,7 +127,7 @@ public class MinimalApiWebApplicationApiGroupGenerator : IIncrementalGenerator
 				group.Routes.Add(routeAttribute);
 			}
 		}
-		
+
 		return group;
 	}
 
@@ -163,14 +167,17 @@ public class MinimalApiWebApplicationApiGroupGenerator : IIncrementalGenerator
 			                     && attributeClass.ContainingNamespace.ToDisplayString() == $"{SourceGenerationHelper.Namespace}"
 			                     && attributeClass.Name == "ApiGroupAttribute");
 
+		// This is the namespace of the class that has the static methods that will be called
+		var apiClassNamespace = classSymbol.ContainingNamespace.ToDisplayString();
+
 		if (attributeData is { ConstructorArguments.IsEmpty: false } groupAttribute)
 		{
-			return new ApiGroup(groupAttribute.ConstructorArguments[0].Value as string ?? classSymbol.Name, classSymbol.Name);
+			return new ApiGroup(groupAttribute.ConstructorArguments[0].Value as string ?? classSymbol.Name, classSymbol.Name, apiClassNamespace);
 		}
 
 		// If there's no constructor argument, the name of the route is the name of the class
 		// TODO: test this
-		return new ApiGroup(classSymbol.Name, classSymbol.Name);
+		return new ApiGroup(classSymbol.Name, classSymbol.Name, apiClassNamespace);
 	}
 
 	private enum ApiMethods
@@ -184,12 +191,14 @@ public class MinimalApiWebApplicationApiGroupGenerator : IIncrementalGenerator
 	{
 		public string Route { get; }
 		public string Name { get; }
+		public string Namespace { get; }
 		public List<ApiRoute> Routes { get; }
 
-		public ApiGroup(string route, string name)
+		public ApiGroup(string route, string name, string @namespace)
 		{
 			Name = name;
 			Route = route;
+			Namespace = @namespace;
 			Routes = [];
 		}
 	}
