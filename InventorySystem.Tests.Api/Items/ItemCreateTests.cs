@@ -115,6 +115,36 @@ public sealed class ItemCreateTests : ApiTestBase
 		Assert.Equal(timeProvider.GetUtcNow(), body.CreatedUtc);
 		Assert.Null(body.UpdatedUtc);
 	}
+	
+	// TODO: get by id, delete by id, maybe change the api to POST to items to create instead of items/create?
+
+	[Fact]
+	public async Task POST_CreateItemWithAttributes_Should_OK()
+	{
+		var timeProvider = new TestTimeProvider(DateTimeOffset.Now);
+		var client = ApiWebApplicationFactory
+			.Configure(config =>
+			{
+				config.DatabaseName = "item-tests";
+				config.TimeProvider = timeProvider;
+			})
+			.CreateClient();
+
+		var response = await PostAsJsonAsync(client, "/items/create", new CreateItemRequestDto()
+		{
+			Name = "Item 1",
+			Description = "A Description"
+		});
+		Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+		var body = await ReadResponseJson<ItemDto>(response);
+		Assert.NotNull(body);
+		Assert.NotEqual(Guid.Empty, body.Id);
+		Assert.Equal("Item 1", body.Name);
+		Assert.Equal("A Description", body.Description);
+		Assert.Equal(timeProvider.GetUtcNow(), body.CreatedUtc);
+		Assert.Null(body.UpdatedUtc);
+	}
 }
 
 public class ApiTestBase : IDisposable

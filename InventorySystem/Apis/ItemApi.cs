@@ -1,26 +1,21 @@
 ﻿using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Builder;
+using InventorySystem.Core.Api;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventorySystem.Apis;
 
-public class ItemApi
+[ApiGroup("items")]
+public class ItemApiRoutes
 {
-	public static void AddItemApiRoutes(WebApplication app)
-	{
-		var apiGroup = app.MapGroup("/items");
-		apiGroup.MapGet("/", (ItemRepository repo) =>
-				repo.Get()
-			)
-			.WithName("GetItems");
+	[ApiGet("/")]
+	public static void GetItems(ItemRepository repo) => repo.Get();
 
-		apiGroup.MapPost("/Create", (ItemRepository repo, [FromBody] CreateItemRequestDto dto) =>
-				repo.Create(dto)
-			)
-			.WithName("CreateItem");
-	}
+	[ApiPost("Create")]
+	public static void CreateItem(ItemRepository repo, [FromBody] CreateItemRequestDto dto) => repo.Create(dto);
 }
 
+
+[JsonSerializable(typeof(ItemDto))]
 [JsonSerializable(typeof(CreateItemRequestDto))]
 internal partial class ItemApiSerializerContext : JsonSerializerContext
 {

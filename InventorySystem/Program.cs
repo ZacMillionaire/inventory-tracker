@@ -38,8 +38,8 @@ public class InventorySystemApi
 			app.MapOpenApi();
 		}
 
-		ItemApi.AddItemApiRoutes(app);
-		AttributeApi.AddAttributeApiRoutes(app);
+		app.WithItemApiRoutes();
+		app.WithAttributeApiRoutes();
 
 		// Todo[] sampleTodos =
 		// [

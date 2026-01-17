@@ -13,7 +13,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\InventorySystem.Data\InventorySystem.Data.csproj" />
+        <ProjectReference Include="..\InventorySystem.Data\InventorySystem.Data.csproj"/>
+        <ProjectReference Include="..\SourceGeneration\InventorySystem.Api.SourceGenerator\InventorySystem.Api.SourceGenerator.csproj" OutputItemType="Analyzer"/>
     </ItemGroup>
 
 </Project>
