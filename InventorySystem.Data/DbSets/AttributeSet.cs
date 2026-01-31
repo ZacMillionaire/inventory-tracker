@@ -24,8 +24,8 @@ public class AttributeSet
 			using var insertCommand = _connection.CreateCommand();
 
 			insertCommand.CommandText = """
-			                            INSERT INTO Attributes (Id, Name, KeyName, Type)
-			                            VALUES ($id, $name, $keyName, $type) 
+			                            INSERT INTO Attributes (Id, Name, KeyName, Type, CreatedUtc)
+			                            VALUES ($id, $name, $keyName, $type, $createdUtc) 
 			                            Returning RowId
 			                            """;
 
@@ -34,6 +34,7 @@ public class AttributeSet
 				new SqliteParameter("name", entityAttribute.Name),
 				new SqliteParameter("keyName", entityAttribute.KeyName),
 				new SqliteParameter("type", entityAttribute.Type),
+				new SqliteParameter("createdUtc", entityAttribute.CreatedUtc.Ticks),
 			]);
 
 			var insertedId = insertCommand.ExecuteScalar();
@@ -48,7 +49,7 @@ public class AttributeSet
 		{
 			using var queryCommand = _connection.CreateCommand();
 			queryCommand.CommandText = """
-			                           SELECT Id, Name, KeyName, Type 
+			                           SELECT Id, Name, KeyName, Type, CreatedUtc, UpdatedUtc
 			                           FROM Attributes
 			                           LIMIT $perPage
 			                           OFFSET $page
@@ -69,7 +70,11 @@ public class AttributeSet
 					Id = attributeReader.GetGuid("Id"),
 					Name = attributeReader.GetString("Name"),
 					KeyName = attributeReader.GetString("KeyName"),
-					Type = Enum.Parse<AttributeType>(attributeReader.GetString("Type"))
+					Type = Enum.Parse<AttributeType>(attributeReader.GetString("Type")),
+					CreatedUtc = new DateTimeOffset(attributeReader.GetInt64("CreatedUtc"), TimeSpan.Zero),
+					UpdatedUtc = attributeReader.IsDBNull("UpdatedUtc")
+						? null
+						: new DateTimeOffset(attributeReader.GetInt64("UpdatedUtc"), TimeSpan.Zero),
 				};
 
 				attributes.Add(row);

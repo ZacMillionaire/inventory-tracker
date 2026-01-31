@@ -33,7 +33,8 @@ public class AttributeRepository
 			Name = attribute.Name,
 			Type = attribute.Type,
 			KeyName = attribute.KeyName,
-			Id = Guid.CreateVersion7(_timeProvider.GetUtcNow())
+			Id = Guid.CreateVersion7(_timeProvider.GetUtcNow()),
+			CreatedUtc = _timeProvider.GetUtcNow(),
 		};
 
 		_database.Attributes.CreateEntity(newAttribute);
@@ -48,7 +49,9 @@ public class AttributeRepository
 			Name = attribute.Name,
 			Type = attribute.Type,
 			KeyName = attribute.KeyName,
-			Id = attribute.Id
+			Id = attribute.Id,
+			CreatedUtc = attribute.CreatedUtc,
+			UpdatedUtc = attribute.UpdatedUtc
 		};
 	}
 

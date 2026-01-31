@@ -7,8 +7,6 @@ public class ItemDto : BaseDto
 	public required string Name { get; set; }
 	public string? Description { get; set; }
 	public List<AttributeDto> Attributes { get; set; } = [];
-	public DateTimeOffset CreatedUtc { get; set; }
-	public DateTimeOffset? UpdatedUtc { get; set; }
 }
 
 public class CreateItemRequestDto
@@ -50,4 +48,6 @@ public class AttributeDto : BaseDto
 public abstract class BaseDto
 {
 	public Guid Id { get; set; }
+	public DateTimeOffset CreatedUtc { get; set; }
+	public DateTimeOffset? UpdatedUtc { get; set; }
 }

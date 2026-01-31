@@ -45,3 +45,15 @@ public class ApiWebApplicationFactory : WebApplicationFactory<InventorySystemApi
 		base.Dispose(disposing);
 	}
 }
+
+internal class TestTimeProvider : TimeProvider
+{
+	private readonly DateTimeOffset _time;
+
+	public override DateTimeOffset GetUtcNow() => _time.UtcDateTime;
+
+	public TestTimeProvider(DateTimeOffset startingTime)
+	{
+		_time = startingTime;
+	}
+}

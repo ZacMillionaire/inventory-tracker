@@ -41,12 +41,17 @@ public sealed class AttributeCreateTests : IDisposable
 		var client = _apiWebApplicationFactory.CreateClient();
 		var ctx = _apiWebApplicationFactory.Context;
 
+		var now = _apiWebApplicationFactory.TimeProvider.GetUtcNow();
+
+		// Create an attribute directly with explicit values
+		// This sort of results in a test testing that the values we set are the values we set but that's the intent here
 		ctx.Attributes.CreateEntity(new()
 		{
 			Name = "String Attribute",
 			KeyName = "string_attribute",
 			Type = AttributeType.String,
-			Id = Guid.CreateVersion7(_apiWebApplicationFactory.TimeProvider.GetUtcNow())
+			Id = Guid.CreateVersion7(now),
+			CreatedUtc = now
 		});
 
 		var response = await client.GetAsync("/attributes");
@@ -56,19 +61,24 @@ public sealed class AttributeCreateTests : IDisposable
 		Assert.NotNull(body);
 		Assert.Single(body);
 		var onlyResult = body[0];
-		Assert.NotEqual(Guid.Empty, onlyResult.Id);
+		Assert.NotEqual(Guid.CreateVersion7(now), onlyResult.Id);
 		Assert.Equal("String Attribute", onlyResult.Name);
 		Assert.Equal("string_attribute", onlyResult.KeyName);
 		Assert.Equal(AttributeType.String, onlyResult.Type);
+		Assert.Equal(now, onlyResult.CreatedUtc);
+		Assert.Null(onlyResult.UpdatedUtc);
 	}
 
 	[Fact]
 	public async Task POST_creates_attribute()
 	{
+		var timeProvider = new TestTimeProvider(DateTimeOffset.Now);
+
 		var client = _apiWebApplicationFactory
 			.Configure(config =>
 			{
 				config.DatabaseName = "test";
+				config.TimeProvider = timeProvider;
 			})
 			.CreateClient();
 
@@ -81,10 +91,12 @@ public sealed class AttributeCreateTests : IDisposable
 
 		var body = await ReadResponseJson<AttributeDto>(response);
 		Assert.NotNull(body);
-		Assert.NotEqual(Guid.Empty, body.Id);
+		Assert.NotEqual(Guid.CreateVersion7(timeProvider.GetUtcNow()), body.Id);
 		Assert.Equal("String Attribute", body.Name);
 		Assert.Equal("string_attribute", body.KeyName);
 		Assert.Equal(AttributeType.String, body.Type);
+		Assert.Equal(timeProvider.GetUtcNow(), body.CreatedUtc);
+		Assert.Null(body.UpdatedUtc);
 	}
 
 

@@ -16,6 +16,16 @@ public class ItemSet
 		_timeProvider = timeProvider ?? TimeProvider.System;
 	}
 
+	/// <summary>
+	/// Creates a new item with the given name and description, linking to any attributes given.
+	/// <remarks>
+	///	If an attribute does not exist, no item will be created and an exception will be thrown.
+	/// </remarks>
+	/// </summary>
+	/// <param name="name"></param>
+	/// <param name="description"></param>
+	/// <param name="attributes"></param>
+	/// <returns></returns>
 	internal Item CreateItem(string name, string? description = null, List<AttributeDto>? attributes = null)
 	{
 		return RunInConnection(() =>
@@ -26,7 +36,7 @@ public class ItemSet
 				Id = Guid.CreateVersion7(now),
 				Name = name,
 				Description = description,
-				CreatedUtc = now
+				CreatedUtc = now,
 			};
 
 			using var insertCommand = _connection.CreateCommand();
@@ -46,7 +56,6 @@ public class ItemSet
 			insertCommand.ExecuteScalar();
 
 			// TODO: link attributes by Id if they exist
-			// TODO: create attribute if it doesn't?
 
 			return newItem;
 		});

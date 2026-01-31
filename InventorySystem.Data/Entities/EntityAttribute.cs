@@ -6,8 +6,16 @@ namespace InventorySystem.Data.Entities;
 [Table("Attributes")]
 internal class EntityAttribute : BaseEntity
 {
+	/// <summary>
+	/// Display name
+	/// </summary>
 	public string Name { get; set; } = null!;
+
+	/// <summary>
+	/// Unique name derived from <see cref="Name"/>
+	/// </summary>
 	public string KeyName { get; set; } = null!;
+
 	public AttributeType Type { get; set; }
 }
 

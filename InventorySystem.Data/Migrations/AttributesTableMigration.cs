@@ -19,7 +19,9 @@ public class AttributesTableMigration
 			                                  primary key,
 			                          Name    TEXT	not null,
 			                          KeyName TEXT  not null,
-			                          Type    integer not null
+			                          Type    integer not null,
+			                          CreatedUtc  integer not null,
+			                      	  UpdatedUtc  integer
 			                      );
 
 			                      create unique index IF NOT EXISTS Idx_Attributes_KeyName
@@ -30,6 +32,12 @@ public class AttributesTableMigration
 
 			                      create index IF NOT EXISTS Idx_Attributes_Type
 			                          on Attributes (Type);
+			                      
+			                      create index IF NOT EXISTS Idx_Attributes_CreatedUtc
+			                          on Attributes (CreatedUtc);
+			                      
+			                      create index IF NOT EXISTS Idx_Attributes_UpdatedUtc
+			                          on Attributes (UpdatedUtc);
 			                      """;
 			command.ExecuteNonQuery();
 		}

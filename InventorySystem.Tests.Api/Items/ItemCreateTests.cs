@@ -77,7 +77,7 @@ public sealed class ItemCreateTests : ApiTestBase
 
 		var body = await ReadResponseJson<ItemDto>(response);
 		Assert.NotNull(body);
-		Assert.NotEqual(Guid.Empty, body.Id);
+		Assert.NotEqual(Guid.CreateVersion7(timeProvider.GetUtcNow()), body.Id);
 		Assert.Equal("Item 1", body.Name);
 		Assert.Equal("A Description", body.Description);
 		Assert.Equal(timeProvider.GetUtcNow(), body.CreatedUtc);
@@ -111,10 +111,18 @@ public sealed class ItemCreateTests : ApiTestBase
 		var body = await ReadResponseJson<ItemDto>(response);
 		Assert.NotNull(body);
 		Assert.NotEqual(Guid.Empty, body.Id);
-		Assert.Equal("Item 1", body.Name);
+		Assert.Equal(item.Name, body.Name);
 		Assert.Equal("Created second", body.Description);
 		Assert.Equal(timeProvider.GetUtcNow(), body.CreatedUtc);
 		Assert.Null(body.UpdatedUtc);
+
+
+		var itemsListResponse = await GetAsync(client, "/items");
+		Assert.Equal(HttpStatusCode.OK, itemsListResponse.StatusCode);
+
+		var itemsListBody = await ReadResponseJson<List<ItemDto>>(itemsListResponse);
+		Assert.NotNull(itemsListBody);
+		Assert.Equal(2, itemsListBody.Count);
 	}
 
 	// TODO: get by id, delete by id, maybe change the api to POST to items to create instead of items/create?
@@ -190,17 +198,5 @@ public class ApiTestBase : IDisposable
 		{
 			ApiWebApplicationFactory.Dispose();
 		}
-	}
-}
-
-internal class TestTimeProvider : TimeProvider
-{
-	private readonly DateTimeOffset _time;
-
-	public override DateTimeOffset GetUtcNow() => _time.UtcDateTime;
-
-	public TestTimeProvider(DateTimeOffset startingTime)
-	{
-		_time = startingTime;
 	}
 }
