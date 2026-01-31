@@ -11,7 +11,7 @@ public class ItemApiRoutes
 	public static List<ItemDto> GetItems(ItemRepository repo) => repo.Get();
 
 	[ApiPost("Create")]
-	public static void CreateItem(ItemRepository repo, [FromBody] CreateItemRequestDto dto) => repo.Create(dto);
+	public static ItemDto CreateItem(ItemRepository repo, [FromBody] CreateItemRequestDto dto) => repo.Create(dto);
 }
 
 [JsonSerializable(typeof(ItemDto))]
