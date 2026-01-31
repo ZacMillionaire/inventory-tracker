@@ -12,7 +12,7 @@ public sealed class DatabaseContext
 
 	public readonly AttributeSet Attributes;
 	public readonly ItemSet Items;
-	
+
 	public DatabaseContext(string connectionString, TimeProvider? timeProvider = null)
 	{
 		_connection = new SqliteConnection(connectionString);
@@ -33,6 +33,7 @@ public sealed class DatabaseContext
 		// TODO: store migrations in a table, only run missing migrations
 		AttributesTableMigration.Up(_connection);
 		ItemsTableMigration.Up(_connection);
+		StringAttributeValueTableMigration.Up(_connection);
 	}
 
 	public void Seed(Action<SqliteConnection> seed)

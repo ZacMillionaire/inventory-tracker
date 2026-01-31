@@ -1,5 +1,6 @@
 using System;
 using System.Text.Json.Serialization;
+using InventorySystem.Data.Attributes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,13 +24,13 @@ public class InventorySystemApi
 			options.SerializerOptions.Converters.Add(new JsonStringEnumConverter<AttributeType>());
 		});
 
+		// TODO: make this not be in memory
 		builder.Services.AddSingleton(new DatabaseContext("Data Source=:memory:"));
 
 		// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 		builder.Services.AddOpenApi();
 
-		builder.Services.AddSingleton<ItemRepository>();
-		builder.Services.AddSingleton<AttributeRepository>();
+		AddRepositories(builder.Services);
 
 		var app = builder.Build();
 
@@ -38,8 +39,7 @@ public class InventorySystemApi
 			app.MapOpenApi();
 		}
 
-		app.WithItemApiRoutes();
-		app.WithAttributeApiRoutes();
+		MapApiRoutes(app);
 
 		// Todo[] sampleTodos =
 		// [
@@ -61,6 +61,19 @@ public class InventorySystemApi
 		// 	.WithName("GetTodoById");
 
 		app.Run();
+	}
+
+	private static void AddRepositories(IServiceCollection services)
+	{
+		services.AddSingleton<ItemRepository>();
+		services.AddSingleton<AttributeRepository>();
+		services.AddSingleton<AttributeValueRepository>();
+	}
+
+	private static void MapApiRoutes(WebApplication app)
+	{
+		app.WithItemApiRoutes();
+		app.WithAttributeApiRoutes();
 	}
 }
 
