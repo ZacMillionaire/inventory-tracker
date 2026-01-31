@@ -27,6 +27,7 @@ public sealed class ItemCreateTests : ApiTestBase
 
 		var body = await ReadResponseJson<List<ItemDto>>(response);
 		Assert.NotNull(body);
+		Assert.Empty(body);
 	}
 
 	[Fact]
@@ -115,7 +116,7 @@ public sealed class ItemCreateTests : ApiTestBase
 		Assert.Equal(timeProvider.GetUtcNow(), body.CreatedUtc);
 		Assert.Null(body.UpdatedUtc);
 	}
-	
+
 	// TODO: get by id, delete by id, maybe change the api to POST to items to create instead of items/create?
 
 	[Fact]

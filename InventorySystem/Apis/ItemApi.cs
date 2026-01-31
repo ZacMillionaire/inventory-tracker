@@ -8,12 +8,11 @@ namespace InventorySystem.Apis;
 public class ItemApiRoutes
 {
 	[ApiGet("/")]
-	public static void GetItems(ItemRepository repo) => repo.Get();
+	public static List<ItemDto> GetItems(ItemRepository repo) => repo.Get();
 
 	[ApiPost("Create")]
 	public static void CreateItem(ItemRepository repo, [FromBody] CreateItemRequestDto dto) => repo.Create(dto);
 }
-
 
 [JsonSerializable(typeof(ItemDto))]
 [JsonSerializable(typeof(CreateItemRequestDto))]
