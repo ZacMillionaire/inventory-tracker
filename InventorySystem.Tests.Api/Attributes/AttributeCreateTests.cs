@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 using InventorySystem.Data.Enums;
 using InventorySystem.Data.Models;
 
-namespace InventorySystem.Tests.Api;
+namespace InventorySystem.Tests.Api.Attributes;
 
 public sealed class AttributeCreateTests : IDisposable
 {
