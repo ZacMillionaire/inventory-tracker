@@ -1,3 +1,4 @@
+# Design Goals and Stage Milestones
 # Stage 1
 - Items and attributes can be created
 - Attributes have distinct strong types
