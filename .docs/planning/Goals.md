@@ -1,0 +1,46 @@
+# Stage 1
+- Items and attributes can be created
+- Attributes have distinct strong types
+- Basic UI that has
+	- CRUD for Items
+		- Items aren't distinct by name
+		- Deletion is soft
+	- CRUD for attributes
+		- Attributes are distinct by name
+		- Not sure if it makes sense to be able to delete an attribute in use
+			- But I think if we do, it's soft deleted so you can't assign it to new/existing items, but you can still see the attribute value, still filter by it, and still edit it on existing items
+			- Maybe it's not called deletion it's called archiving, and unarchiving just allows it to be used again
+	- Can search for items by name, description or by attributes
+	- Searching by attributes supports ranges for numeric and temporal types
+	- Attribute search will probably be simple at this stage
+		- eg, searching for items where `colour == black` and `volume > 200 & < 300`
+		- No either/or groups yet
+		- It would be nice to see cardinal breakdowns as attribute filters are added
+			- If you select `colour == black` for the first attribute filter, and there are items with `volume`, `material` and `type`, the backend would return numbers for each set where an item has `colour == black` and has a `volume`, `material` or `type` attribute
+			- This can introduce fun cardinality explosions, but seeing as this is a reduction it's more reducing the filter options on the UI
+				- The backend will still support all the filters regardless and isn't concerned with such logical impossibilities
+				- garbage in, garbage out
+# Stage 2
+- Extend items to act as locations or containers
+	- Figure out what happens when you delete a container
+		- it's basically bulk delete, but probably better to let a user decide if items within get deleted as well or just unparented
+			- Or they just become contained in their parent container item if any, otherwise they remain unparented/uncontained (the default state for items anyway)
+		- How would it work with nested container items?
+			- Simply reparenting items up a level may be preferred
+			- Or we could prevent it from happening
+			- Or have an option for a user to move all non-container items in an item container to a new container so the container can be deleted
+				- Have ideas for the UI but complex currently
+				- Maybe deleting a container regardless of nesting, for each item in the container there's a drop down option to select a choice like
+					- Unparent
+					- Move to parent container or unparent (default)
+					- Delete with container
+						- Only possible if the item is not a container
+						- Disabled for container items
+# Stage 3
+- "automation", name pending as these are more data queries to visualise and not actually automating attributes or updating items
+	- _unless_
+- More for supporting kind of customisable dashboards?
+- Examples
+	- You can make an "automation" that returns all items with an `expiryDate` attribute and visualise them on a calendar
+		- Or maybe the "automation" instead only returns items with an `expiryDate > (today - 1 day)` so you can have a view of what bottles of milk you should start fucking chugging
+- Possibly a more UI heavy stage around how we'd design data components to visualise queries and etc
