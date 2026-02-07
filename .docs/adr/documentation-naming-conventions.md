@@ -15,3 +15,8 @@ Within the `.docs` folder, the following rules apply
 - File names using mixed case **should** be avoided where possible
 - File name casing **should** be consistent per folder
 - Additional dot folders **must** not be created
+
+Top level markdown files have general exceptions to these rules as they're intended to serve as introductory files such as a readme or code of practice. Naming scheme is much more subjective, but should be named in a style that is more "human" at a glance.
+## Amendments
+### 2026-02-07
+- Added section documenting top level markdown files
