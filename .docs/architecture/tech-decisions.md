@@ -14,6 +14,11 @@ Basic outline of what'll be used, subject to refinement of course. Once things a
 # Database
 - Thinking Postgres and [MartenDB](https://martendb.io/introduction.html) 
 	- I'm already writing tests against Sqlite in a document db style and was already thinking towards postgres anyway
+- Most objects are stored primarily serialised as a JSON data column
+	- anything required for indexing gets extracted out
+	- Makes adding data in a bit of a pain in the ass if it has to be done by hand
+		- eg, SQLite needs all that plumbing written by hand, but if it uses postgres then martenDB handles that for us
+		- But postgres brings in another remote dependency just to run the app which might be ok, but builtin SQLite should be fine
 # Frontend
 - Vue
 	- Latest, but obviously keeping it (and any other packages), up to date constantly
