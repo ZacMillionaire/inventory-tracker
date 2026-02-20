@@ -1,0 +1,23 @@
+# Items
+## Design
+- An item can exist without attributes
+- Creating an item with attributes does not create attributes if they do not already exist
+	- It's assumed that the attribute will be created first either by the UI or the API
+	- This is because the complexity of creating an attribute along side an item is too much to solve
+		- If they enter a number as an attribute, what if they actually wanted it to be a lookup?
+		- It seems like it might not be trivial if a user just uses simple attributes but what about uniqueness validation? If a user creates an item with 2 new attributes but they have the same name, does that result in 1 attribute with 2 values both attached to it?
+			- In any case if a validation error would fail does that fail the entire creation of the item and would we force the user to change the item again
+			- "we could just pre-validate it so they can't submit it as invalid", yeah but that's not how good APIs work, because we'd still be rejecting all or nothing and I'd rather the API just be authoritative and not have to worry about multiple responsibilities where some cases it might create an attribute if it's a duplicate but then might not if the types are different etc
+		- Easiest constraint is that attributes have to exist first, and make creating attributes quick and easy as it's more likely a user will be creating items more frequently than attributes, as attributes can be shared across multiple items so over time the number of attributes created will decrease
+- Creating an item with an attribute id that does not exist also fails
+- Items are always unique
+	- By unique this means that multiple items can exist with the exact same name and attributes, but have a different description or photo
+	- And item can be created **distinctly** by a toggle, which indicates that **no** other item can exist by it's exact normalised name
+	- Toggling an item to distinct will check for the existence of any other items that might match by name
+		- If another item exists by name, an error will be returned an the action prevented
+		- In future there may be supporting API calls that can merge items, but it will not happen automatically and must be a distinct action taken by the user
+			- The UI will make this smoother of course, but the API will be without confirmation because duh
+- Items must have
+	- Id, Name, CreatedDateUtc, UpdatedDateUtc (defaults to CreatedDateUtc for new items), Distinct (defaults to false)
+- Items optionally have
+	- Description, Image (stored as a blob)
