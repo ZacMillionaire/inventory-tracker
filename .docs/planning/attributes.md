@@ -10,6 +10,7 @@
 		- AttributeId, ItemId, Value
 - Attributes are 1:n
 	- attribute_value : item
+	- an attribute cannot exist more than once on the same item
 - Attributes can be renamed
 	- Renaming creates an audit event
 	- Any items that use a renamed attribute get an audit event as well
