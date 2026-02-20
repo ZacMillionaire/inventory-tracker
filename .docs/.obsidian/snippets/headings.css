@@ -1,0 +1,24 @@
+.cm-header-1,
+h1 {
+  color: lch(22% 98 306deg);
+}
+.cm-header-2,
+h2 {
+  color: lch(31% 74 296deg);
+}
+.cm-header-3,
+h3 {
+  color: lch(39% 53 283deg);
+}
+.cm-header-4,
+h4 {
+  color: lch(46% 39 262deg);
+}
+.cm-header-5,
+h5 {
+  color: lch(53% 31 234deg);
+}
+.cm-header-6,
+h6 {
+  color: lch(59% 26 210deg);
+}

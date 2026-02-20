@@ -1,0 +1,41 @@
+# Attributes
+## Design
+- Exists in 2 parts
+	- Attribute details
+		- Name, Id, Type
+		- Unique by name (normalised to some form)
+	- Value
+		- 1 table per type
+			- eg int, decimal, datetime - all individual tables
+		- AttributeId, ItemId, Value
+- Attributes are 1:n
+	- attribute_value : item
+	- an attribute cannot exist more than once on the same item
+- Attributes can be renamed
+	- Renaming creates an audit event
+	- Any items that use a renamed attribute get an audit event as well
+		- This depends on if I do audits or whatever
+- Base types
+	- string, int, decimal, datetime, dateonly, timeonly
+	- datetime is from DateTimeUtc as DateTimeOffset
+		- Only the browser will render it as local time
+			- I hate working with time so everything gets treated as UTC
+		- DateOnly and TimeOnly are maybes
+			- They're not exactly temporal as they're more for instances such as calendar repetition or alarms that are relative to the current time
+				- eg, DateOnly 01/02/2025 would be the 1st of February 2025 regardless of the timezone of a DateTimeOffset
+			- Dunno what they might be used for until the "automation" feature is started
+- Lookup table types
+	- list of strings, maybe int and decimal
+		- this attribute is its own table that stores the values allowed
+			- but when a value is selected it goes into its respective type
+		- columns
+			- (same as an attribute), values (as a csv)
+		- if a value is removed from the lookup table definition but is still in use this is fine
+			- maybe? Could just scan all attribute values where the id+value matches and then prevent the value being removed
+			- But more preferably when you view an attribute it scans to see if the value is part of the lookup table
+				- Not certain on the complexity of writing this query that checks if a value belonging to a lookup table so might stick to calculating it if the value changes a column indicating if the value exists is in use
+				- viewing attributes is far more common than updating so it'd be better to calculate once
+				- dunno if I want an extra column for every single value just incase its part of a lookup table
+				- could store the attribute values as a json object same as items and just index the value out
+					- and then that json object could also just have the original name and description as well but...that's a lot of redundant information
+- data for an attribute value is a json object to store metadata but the value is it's own indexed column
