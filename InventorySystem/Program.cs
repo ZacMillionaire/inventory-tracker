@@ -1,7 +1,9 @@
 using System;
 using System.Text.Json.Serialization;
+using InventorySystem.Core;
 using InventorySystem.Data.Attributes;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -26,6 +28,7 @@ public class InventorySystemApi
 
 		// TODO: make this not be in memory
 		builder.Services.AddSingleton(new DatabaseContext("Data Source=:memory:"));
+		var a = builder.Configuration.GetConnectionString(EnvironmentKeys.PostgresDbEnvironmentKey);
 
 		builder.AddServiceDefaults();
 
