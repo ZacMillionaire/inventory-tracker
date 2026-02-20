@@ -27,12 +27,16 @@ public class InventorySystemApi
 		// TODO: make this not be in memory
 		builder.Services.AddSingleton(new DatabaseContext("Data Source=:memory:"));
 
+		builder.AddServiceDefaults();
+
 		// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 		builder.Services.AddOpenApi();
 
 		AddRepositories(builder.Services);
 
 		var app = builder.Build();
+
+		app.MapDefaultEndpoints();
 
 		if (app.Environment.IsDevelopment())
 		{
