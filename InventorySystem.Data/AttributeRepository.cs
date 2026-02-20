@@ -1,9 +1,10 @@
 ﻿using InventorySystem.Data.Entities;
+using InventorySystem.Data.Interfaces;
 using InventorySystem.Data.Models;
 
 namespace InventorySystem.Data;
 
-public class AttributeRepository
+public class AttributeRepository : IAttributeRepository
 {
 	private readonly DatabaseContext _database;
 	private readonly TimeProvider _timeProvider;

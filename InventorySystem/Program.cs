@@ -2,6 +2,7 @@ using System;
 using System.Text.Json.Serialization;
 using InventorySystem.Core;
 using InventorySystem.Data.Attributes;
+using InventorySystem.Data.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,8 +27,6 @@ public class InventorySystemApi
 			options.SerializerOptions.Converters.Add(new JsonStringEnumConverter<AttributeType>());
 		});
 
-		// TODO: make this not be in memory
-		builder.Services.AddSingleton(new DatabaseContext("Data Source=:memory:"));
 		var a = builder.Configuration.GetConnectionString(EnvironmentKeys.PostgresDbEnvironmentKey);
 
 		builder.AddServiceDefaults();
@@ -53,8 +52,11 @@ public class InventorySystemApi
 
 	private static void AddRepositories(IServiceCollection services)
 	{
+		// TODO: make this not be in memory
+		services.AddSingleton(new DatabaseContext("Data Source=:memory:"));
+		
 		services.AddSingleton<ItemRepository>();
-		services.AddSingleton<AttributeRepository>();
+		services.AddSingleton<IAttributeRepository, AttributeRepository>();
 		services.AddSingleton<AttributeValueRepository>();
 	}
 
