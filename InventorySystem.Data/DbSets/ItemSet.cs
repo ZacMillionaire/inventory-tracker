@@ -5,14 +5,13 @@ using Microsoft.Data.Sqlite;
 
 namespace InventorySystem.Data.DbSets;
 
-public class ItemSet
+public class ItemSet : DbSetbase
 {
-	private readonly SqliteConnection _connection;
 	private readonly TimeProvider _timeProvider;
 
 	public ItemSet(SqliteConnection connection, TimeProvider? timeProvider = null)
+		: base(connection)
 	{
-		_connection = connection;
 		_timeProvider = timeProvider ?? TimeProvider.System;
 	}
 
@@ -28,7 +27,7 @@ public class ItemSet
 	/// <returns></returns>
 	internal Item CreateItem(string name, string? description = null, List<AttributeDto>? attributes = null)
 	{
-		return RunInConnection(() =>
+		return RunInConnection(connection =>
 		{
 			var now = _timeProvider.GetUtcNow();
 			var newItem = new Item()
@@ -39,7 +38,7 @@ public class ItemSet
 				CreatedUtc = now,
 			};
 
-			using var insertCommand = _connection.CreateCommand();
+			using var insertCommand = connection.CreateCommand();
 
 			insertCommand.CommandText = """
 			                            INSERT INTO Items (Id, Name, Description, CreatedUtc)
@@ -61,24 +60,11 @@ public class ItemSet
 		});
 	}
 
-	private T RunInConnection<T>(Func<T> func)
-	{
-		try
-		{
-			_connection.Open();
-			return func();
-		}
-		finally
-		{
-			_connection.Close();
-		}
-	}
-
 	public List<ItemDto> GetItems(int page = 1, int perPage = 25)
 	{
-		return RunInConnection(() =>
+		return RunInConnection(connection =>
 		{
-			using var queryCommand = _connection.CreateCommand();
+			using var queryCommand = connection.CreateCommand();
 			queryCommand.CommandText = """
 			                           SELECT Id, Name, Description, CreatedUtc, UpdatedUtc 
 			                           FROM Items

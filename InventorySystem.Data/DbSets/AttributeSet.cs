@@ -6,22 +6,21 @@ using Microsoft.Data.Sqlite;
 
 namespace InventorySystem.Data.DbSets;
 
-public class AttributeSet
+public class AttributeSet : DbSetbase
 {
-	private readonly SqliteConnection _connection;
 	private readonly TimeProvider _timeProvider;
 
 	internal AttributeSet(SqliteConnection connection, TimeProvider? timeProvider = null)
+		: base(connection)
 	{
-		_connection = connection;
 		_timeProvider = timeProvider ?? TimeProvider.System;
 	}
 
 	internal EntityAttribute CreateEntity(EntityAttribute entityAttribute)
 	{
-		return RunInConnection(() =>
+		return RunInConnection(connection =>
 		{
-			using var insertCommand = _connection.CreateCommand();
+			using var insertCommand = connection.CreateCommand();
 
 			insertCommand.CommandText = """
 			                            INSERT INTO Attributes (Id, Name, KeyName, Type, CreatedUtc)
@@ -45,9 +44,9 @@ public class AttributeSet
 
 	internal List<AttributeDto> GetAttributes(int page = 1, int perPage = 25)
 	{
-		return RunInConnection(() =>
+		return RunInConnection(connection =>
 		{
-			using var queryCommand = _connection.CreateCommand();
+			using var queryCommand = connection.CreateCommand();
 			queryCommand.CommandText = """
 			                           SELECT Id, Name, KeyName, Type, CreatedUtc, UpdatedUtc
 			                           FROM Attributes
@@ -86,9 +85,9 @@ public class AttributeSet
 
 	public bool AttributeExistsByName(string attributeName)
 	{
-		return RunInConnection(() =>
+		return RunInConnection(connection =>
 		{
-			using var queryCommand = _connection.CreateCommand();
+			using var queryCommand = connection.CreateCommand();
 			queryCommand.CommandText = """
 			                           SELECT 1 
 			                           FROM Attributes
@@ -100,18 +99,5 @@ public class AttributeSet
 
 			return queryCommand.ExecuteScalar() != null;
 		});
-	}
-
-	protected T RunInConnection<T>(Func<T> func)
-	{
-		try
-		{
-			_connection.Open();
-			return func();
-		}
-		finally
-		{
-			_connection.Close();
-		}
 	}
 }
