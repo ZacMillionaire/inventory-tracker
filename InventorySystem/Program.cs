@@ -78,9 +78,6 @@ public class InventorySystemApi
 
 	private static void AddRepositories(IServiceCollection services)
 	{
-		// TODO: make this not be in memory
-		services.AddSingleton(new DatabaseContext("Data Source=:memory:"));
-
 		services.AddScoped<ItemRepository>();
 		services.AddScoped<IAttributeRepository, AttributeRepository>();
 		services.AddSingleton<AttributeValueRepository>();

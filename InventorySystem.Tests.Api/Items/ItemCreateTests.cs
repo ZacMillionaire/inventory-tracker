@@ -25,7 +25,6 @@ public sealed class ItemCreateTests : ApiTestBase
 		var client = ApiWebApplicationFactory
 			.Configure(config =>
 			{
-				config.DatabaseName = "item-tests";
 				config.TimeProvider = timeProvider;
 			})
 			.CreateClient();
@@ -51,7 +50,6 @@ public sealed class ItemCreateTests : ApiTestBase
 		var client = ApiWebApplicationFactory
 			.Configure(config =>
 			{
-				config.DatabaseName = "item-tests";
 				config.TimeProvider = timeProvider;
 			})
 			.CreateClient();
@@ -75,7 +73,6 @@ public sealed class ItemCreateTests : ApiTestBase
 		var client = ApiWebApplicationFactory
 			.Configure(config =>
 			{
-				config.DatabaseName = "item-tests";
 				config.TimeProvider = timeProvider;
 			})
 			.CreateClient();
@@ -104,7 +101,6 @@ public sealed class ItemCreateTests : ApiTestBase
 		var client = ApiWebApplicationFactory
 			.Configure(config =>
 			{
-				config.DatabaseName = "item-tests";
 				config.TimeProvider = timeProvider;
 			})
 			.CreateClient();
@@ -144,7 +140,6 @@ public sealed class ItemCreateTests : ApiTestBase
 		var client = ApiWebApplicationFactory
 			.Configure(config =>
 			{
-				config.DatabaseName = "item-tests";
 				config.TimeProvider = timeProvider;
 			})
 			.CreateClient();
