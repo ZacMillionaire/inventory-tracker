@@ -2,8 +2,11 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using InventorySystem.Data;
 using InventorySystem.Data.Enums;
+using InventorySystem.Data.Interfaces;
 using InventorySystem.Data.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace InventorySystem.Tests.Api.Attributes;
 
@@ -77,7 +80,6 @@ public sealed class AttributeCreateTests : IDisposable
 		var client = _apiWebApplicationFactory
 			.Configure(config =>
 			{
-				config.DatabaseName = "test";
 				config.TimeProvider = timeProvider;
 			})
 			.CreateClient();
@@ -87,6 +89,7 @@ public sealed class AttributeCreateTests : IDisposable
 			Name = "String Attribute",
 			Type = AttributeType.String
 		}, _jsonOptions);
+
 		Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
 		var body = await ReadResponseJson<AttributeDto>(response);
@@ -103,18 +106,21 @@ public sealed class AttributeCreateTests : IDisposable
 	[Fact]
 	public async Task POST_ForExistingName_ReturnsBadRequest()
 	{
-		var client = _apiWebApplicationFactory.CreateClient();
-		var ctx = _apiWebApplicationFactory.Context;
-
-		ctx.Attributes.CreateEntity(new()
+		// Directly create an entity to conflict against
+		await using (var scope = _apiWebApplicationFactory.Services.CreateAsyncScope())
 		{
-			Name = "String Attribute",
-			KeyName = "string_attribute",
-			Type = AttributeType.String,
-			Id = Guid.CreateVersion7(_apiWebApplicationFactory.TimeProvider.GetUtcNow())
-		});
+			AttributeRepository attributeRepository = (AttributeRepository)scope.ServiceProvider.GetRequiredService<IAttributeRepository>();
 
+			await attributeRepository.CreateAsyncImpl(new()
+			{
+				Name = "String Attribute",
+				KeyName = "string_attribute",
+				Type = AttributeType.String,
+				Id = Guid.CreateVersion7(_apiWebApplicationFactory.TimeProvider.GetUtcNow())
+			});
+		}
 
+		var client = _apiWebApplicationFactory.CreateClient();
 		var response2 = await client.PostAsJsonAsync("/attributes/create", new CreateAttributeDto()
 		{
 			Name = "String Attribute",

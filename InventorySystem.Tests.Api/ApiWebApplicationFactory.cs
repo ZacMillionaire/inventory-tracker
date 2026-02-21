@@ -1,5 +1,6 @@
 ﻿using InventorySystem.Core;
 using InventorySystem.Data;
+using Marten;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -23,7 +24,7 @@ public class ApiWebApplicationFactory : WebApplicationFactory<InventorySystemApi
 		config(this);
 		return this;
 	}
-
+	
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
 	{
 		Directory.CreateDirectory(_generatedDatabaseFolder);
@@ -51,6 +52,14 @@ public class ApiWebApplicationFactory : WebApplicationFactory<InventorySystemApi
 			services.AddSingleton(_context.GetContext);
 			services.AddSingleton(TimeProvider);
 		});
+	}
+
+	public override ValueTask DisposeAsync()
+	{
+		var store = Services.GetRequiredService<IDocumentStore>();
+		// Ensure our database is clean
+		store.Advanced.Clean.DeleteAllDocumentsAsync();
+		return base.DisposeAsync();
 	}
 
 	protected override void Dispose(bool disposing)

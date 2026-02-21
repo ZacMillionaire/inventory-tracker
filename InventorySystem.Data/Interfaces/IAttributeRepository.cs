@@ -5,6 +5,6 @@ namespace InventorySystem.Data.Interfaces;
 public interface IAttributeRepository
 {
 	List<AttributeDto> Get();
-	bool AttributeExistsByName(string attributeName);
+	Task<bool> AttributeExistsByName(string attributeName);
 	Task<AttributeDto> Create(CreateAttributeDto attribute);
 }

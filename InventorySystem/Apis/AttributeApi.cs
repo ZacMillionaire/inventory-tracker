@@ -16,7 +16,7 @@ public class AttributeApiRoutes
 
 	[ApiPost("Create")]
 	public static async Task<Results<Ok<AttributeDto>, BadRequest>> CreateAttribute(IAttributeRepository repo, [FromBody] CreateAttributeDto dto) =>
-		!repo.AttributeExistsByName(dto.Name)
+		!await repo.AttributeExistsByName(dto.Name)
 			? TypedResults.Ok(await repo.Create(dto))
 			: TypedResults.BadRequest();
 }

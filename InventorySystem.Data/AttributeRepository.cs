@@ -23,28 +23,35 @@ public class AttributeRepository : IAttributeRepository
 		return _database.Attributes.GetAttributes();
 	}
 
-	public bool AttributeExistsByName(string attributeName)
+	public async Task<bool> AttributeExistsByName(string attributeName)
 	{
-		return _database.Attributes.AttributeExistsByName(attributeName);
+		return await _documentSession.Query<EntityAttribute>()
+			.AnyAsync(x => x.Name == attributeName);
 	}
 
 	public async Task<AttributeDto> Create(CreateAttributeDto attribute)
 	{
 		attribute.KeyName ??= AttributeNameToKeyName(attribute.Name);
-		var newAttribute = new EntityAttribute()
+
+		var newAttribute = await CreateAsyncImpl(new EntityAttribute()
 		{
 			Name = attribute.Name,
 			Type = attribute.Type,
 			KeyName = attribute.KeyName,
 			Id = Guid.CreateVersion7(_timeProvider.GetUtcNow()),
 			CreatedUtc = _timeProvider.GetUtcNow(),
-		};
+		});
 
-		_documentSession.Store(newAttribute);
+		return ToDto(newAttribute);
+	}
+
+	internal async Task<EntityAttribute> CreateAsyncImpl(EntityAttribute attribute)
+	{
+		_documentSession.Store(attribute);
 
 		await _documentSession.SaveChangesAsync();
 
-		return ToDto(newAttribute);
+		return attribute;
 	}
 
 	private AttributeDto ToDto(EntityAttribute attribute)
