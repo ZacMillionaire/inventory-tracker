@@ -50,6 +50,9 @@ public class InventorySystemApi
 			// options.Development.ResourceAutoCreate = AutoCreate.All;
 			options.Production.GeneratedCodeMode = TypeLoadMode.Static;
 			options.Production.ResourceAutoCreate = AutoCreate.None;
+			
+			// options.Development.GeneratedCodeMode = TypeLoadMode.Static;
+			// options.Development.ResourceAutoCreate = AutoCreate.None;
 		});
 
 		builder.AddServiceDefaults();
@@ -78,7 +81,7 @@ public class InventorySystemApi
 		// TODO: make this not be in memory
 		services.AddSingleton(new DatabaseContext("Data Source=:memory:"));
 
-		services.AddSingleton<ItemRepository>();
+		services.AddScoped<ItemRepository>();
 		services.AddScoped<IAttributeRepository, AttributeRepository>();
 		services.AddSingleton<AttributeValueRepository>();
 	}

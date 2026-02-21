@@ -1,18 +1,21 @@
 ﻿using System.Text.Json.Serialization;
 using InventorySystem.Data.Entities;
 using InventorySystem.Data.Models;
+using Marten;
 
 namespace InventorySystem.Data;
 
 public class ItemRepository
 {
 	private readonly DatabaseContext _database;
+	private readonly IDocumentSession _documentSession;
 	private readonly TimeProvider _timeProvider;
 
-	public ItemRepository(TimeProvider timeProvider, DatabaseContext dataStorge)
+	public ItemRepository(TimeProvider timeProvider, DatabaseContext dataStorge, IDocumentSession documentSession)
 	{
 		_timeProvider = timeProvider;
 		_database = dataStorge;
+		_documentSession = documentSession;
 	}
 
 	public ItemDto Create(CreateItemRequestDto newItem)
@@ -37,9 +40,12 @@ public class ItemRepository
 		// 	.ToList();
 	}
 
-	public List<ItemDto> Get()
+	public async Task<List<ItemDto>> Get()
 	{
-		return _database.Items.GetItems();
+		var attributes = await _documentSession.Query<Item>()
+			.ToListAsync();
+
+		return attributes.Select(ToDto).ToList();
 		// return _items.Select(x => new ItemDto()
 		// 	{
 		// 		Name = x.Name,

@@ -166,7 +166,7 @@ public class ApiTestBase : IDisposable
 	private readonly JsonSerializerOptions _jsonOptions;
 	protected readonly ApiWebApplicationFactory ApiWebApplicationFactory;
 
-	public ApiTestBase(ITestOutputHelper testOutputHelper)
+	protected ApiTestBase(ITestOutputHelper testOutputHelper)
 	{
 		ApiWebApplicationFactory = new ApiWebApplicationFactory(testOutputHelper);
 		_jsonOptions = new JsonSerializerOptions()
