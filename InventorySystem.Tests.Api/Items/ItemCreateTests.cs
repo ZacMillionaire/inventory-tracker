@@ -43,16 +43,10 @@ public sealed class ItemCreateTests : ApiTestBase
 	{
 		var timeProvider = new TestTimeProvider(DateTimeOffset.Now);
 
-		await using var scope = ApiWebApplicationFactory.Services.CreateAsyncScope();
-		ItemRepository itemRepository = (ItemRepository)scope.ServiceProvider.GetRequiredService<ItemRepository>();
+		var expectedName = "Item 1";
+		var expectedDescription = "Created First";
 
-		var createdItem = await itemRepository.CreateAsyncImpl(new Item()
-		{
-			Name = "Item 1",
-			Description = "Created First",
-			CreatedUtc = timeProvider.GetUtcNow(),
-			Id = Guid.CreateVersion7(timeProvider.GetUtcNow())
-		});
+		var createdItem = await CreateItem(expectedName, expectedDescription, timeProvider);
 
 		var client = ApiWebApplicationFactory
 			.Configure(config =>
@@ -70,6 +64,8 @@ public sealed class ItemCreateTests : ApiTestBase
 		Assert.Single(body);
 		Assert.Equal(createdItem.Id, body[0].Id);
 		Assert.Equal(createdItem.CreatedUtc, body[0].CreatedUtc);
+		Assert.Equal(expectedName, body[0].Name);
+		Assert.Equal(expectedDescription, body[0].Description);
 	}
 
 	[Fact]
@@ -113,9 +109,7 @@ public sealed class ItemCreateTests : ApiTestBase
 			})
 			.CreateClient();
 
-		var context = ApiWebApplicationFactory.Context;
-
-		var item = context.Items.CreateItem("Item 1", "Created First");
+		var item = await CreateItem("Item 1", "Created First", timeProvider);
 
 		var response = await PostAsJsonAsync(client, "/items/create", new CreateItemRequestDto()
 		{
@@ -129,9 +123,9 @@ public sealed class ItemCreateTests : ApiTestBase
 		Assert.NotEqual(Guid.Empty, body.Id);
 		Assert.Equal(item.Name, body.Name);
 		Assert.Equal("Created second", body.Description);
+		Assert.NotEqual(item.Description, body.Description);
 		Assert.Equal(timeProvider.GetUtcNow(), body.CreatedUtc);
 		Assert.Null(body.UpdatedUtc);
-
 
 		var itemsListResponse = await GetAsync(client, "/items");
 		Assert.Equal(HttpStatusCode.OK, itemsListResponse.StatusCode);
@@ -143,7 +137,7 @@ public sealed class ItemCreateTests : ApiTestBase
 
 	// TODO: get by id, delete by id, maybe change the api to POST to items to create instead of items/create?
 
-	[Fact]
+	// TODO implement attributes first and redo this test
 	public async Task POST_CreateItemWithAttributes_Should_OK()
 	{
 		var timeProvider = new TestTimeProvider(DateTimeOffset.Now);
@@ -169,6 +163,22 @@ public sealed class ItemCreateTests : ApiTestBase
 		Assert.Equal("A Description", body.Description);
 		Assert.Equal(timeProvider.GetUtcNow(), body.CreatedUtc);
 		Assert.Null(body.UpdatedUtc);
+	}
+
+	private async Task<Item> CreateItem(string name, string description, TimeProvider timeProvider)
+	{
+		await using var scope = ApiWebApplicationFactory.Services.CreateAsyncScope();
+		ItemRepository itemRepository = (ItemRepository)scope.ServiceProvider.GetRequiredService<ItemRepository>();
+
+		var createdItem = await itemRepository.CreateAsyncImpl(new Item()
+		{
+			Name = name,
+			Description = description,
+			CreatedUtc = timeProvider.GetUtcNow(),
+			Id = Guid.CreateVersion7(timeProvider.GetUtcNow())
+		});
+
+		return createdItem;
 	}
 }
 
