@@ -1,8 +1,10 @@
-﻿using InventorySystem.Data;
+﻿using InventorySystem.Core;
+using InventorySystem.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 
 namespace InventorySystem.Tests.Api;
 
@@ -28,6 +30,18 @@ public class ApiWebApplicationFactory : WebApplicationFactory<InventorySystemApi
 
 		var connectionString = $"Data Source={_generatedDatabaseFolder}/{DatabaseName ?? Guid.NewGuid().ToString()}.db";
 
+		// set up the connection string for postgres, settings from ./Containers/docker-compose.yml
+		var npgsqlConnectionStringBuilder = new NpgsqlConnectionStringBuilder()
+		{
+			Database = "postgres",
+			Username = "postgres",
+			Password = "postgres",
+			Host = "localhost",
+			Port = 5433
+		};
+
+		Environment.SetEnvironmentVariable($"ConnectionStrings__{EnvironmentKeys.PostgresDbEnvironmentKey}", npgsqlConnectionStringBuilder.ToString());
+		
 		_context ??= new DbContextHelper(connectionString, TimeProvider);
 
 		// Is be called after the `ConfigureServices` from the Startup
