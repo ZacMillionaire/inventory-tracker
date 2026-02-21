@@ -10,8 +10,6 @@ public sealed class DatabaseContext
 	private readonly SqliteConnection _connection;
 	private readonly TimeProvider _timeProvider;
 
-	public readonly ItemSet Items;
-
 	public DatabaseContext(string connectionString, TimeProvider? timeProvider = null)
 	{
 		_connection = new SqliteConnection(connectionString);
@@ -22,8 +20,6 @@ public sealed class DatabaseContext
 		_connection.Close();
 
 		RunMigrations();
-		
-		Items = new ItemSet(_connection, _timeProvider);
 	}
 
 	private void RunMigrations()

@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using InventorySystem.Data.Entities;
+﻿using InventorySystem.Data.Entities;
 using InventorySystem.Data.Models;
 using Marten;
 
@@ -7,14 +6,12 @@ namespace InventorySystem.Data;
 
 public class ItemRepository
 {
-	private readonly DatabaseContext _database;
 	private readonly IDocumentSession _documentSession;
 	private readonly TimeProvider _timeProvider;
 
-	public ItemRepository(TimeProvider timeProvider, DatabaseContext dataStorge, IDocumentSession documentSession)
+	public ItemRepository(TimeProvider timeProvider, IDocumentSession documentSession)
 	{
 		_timeProvider = timeProvider;
-		_database = dataStorge;
 		_documentSession = documentSession;
 	}
 
