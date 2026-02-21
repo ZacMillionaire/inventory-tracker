@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using InventorySystem.Core.Api;
 using InventorySystem.Data.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -14,9 +15,9 @@ public class AttributeApiRoutes
 	public static Ok<List<AttributeDto>> GetAttribute(IAttributeRepository repo) => TypedResults.Ok(repo.Get());
 
 	[ApiPost("Create")]
-	public static Results<Ok<AttributeDto>, BadRequest> CreateAttribute(IAttributeRepository repo, [FromBody] CreateAttributeDto dto) =>
+	public static async Task<Results<Ok<AttributeDto>, BadRequest>> CreateAttribute(IAttributeRepository repo, [FromBody] CreateAttributeDto dto) =>
 		!repo.AttributeExistsByName(dto.Name)
-			? TypedResults.Ok(repo.Create(dto))
+			? TypedResults.Ok(await repo.Create(dto))
 			: TypedResults.BadRequest();
 }
 

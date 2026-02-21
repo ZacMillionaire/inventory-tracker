@@ -3,10 +3,14 @@ using System.Text.Json.Serialization;
 using InventorySystem.Core;
 using InventorySystem.Data.Attributes;
 using InventorySystem.Data.Interfaces;
+using JasperFx;
+using JasperFx.CodeGeneration;
+using Marten;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Npgsql;
 
 namespace InventorySystem;
 
@@ -27,7 +31,26 @@ public class InventorySystemApi
 			options.SerializerOptions.Converters.Add(new JsonStringEnumConverter<AttributeType>());
 		});
 
-		var a = builder.Configuration.GetConnectionString(EnvironmentKeys.PostgresDbEnvironmentKey);
+		// Required for UseNpgsqlDataSource below
+		builder.Services.AddNpgsqlDataSource(builder.Configuration.GetConnectionString(EnvironmentKeys.PostgresDbEnvironmentKey)!);
+
+		builder.Services.AddMarten(options =>
+			{
+				// If you want the Marten controlled PostgreSQL objects
+				// in a different schema other than "public"
+				options.DatabaseSchemaName = "InventorySystem";
+			})
+			// This is recommended in new development projects
+			.UseLightweightSessions()
+			.UseNpgsqlDataSource();
+
+		builder.Services.CritterStackDefaults(options =>
+		{
+			// options.Development.GeneratedCodeMode = TypeLoadMode.Auto;
+			// options.Development.ResourceAutoCreate = AutoCreate.All;
+			options.Production.GeneratedCodeMode = TypeLoadMode.Static;
+			options.Production.ResourceAutoCreate = AutoCreate.None;
+		});
 
 		builder.AddServiceDefaults();
 
@@ -54,9 +77,9 @@ public class InventorySystemApi
 	{
 		// TODO: make this not be in memory
 		services.AddSingleton(new DatabaseContext("Data Source=:memory:"));
-		
+
 		services.AddSingleton<ItemRepository>();
-		services.AddSingleton<IAttributeRepository, AttributeRepository>();
+		services.AddScoped<IAttributeRepository, AttributeRepository>();
 		services.AddSingleton<AttributeValueRepository>();
 	}
 
