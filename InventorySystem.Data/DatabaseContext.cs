@@ -10,7 +10,6 @@ public sealed class DatabaseContext
 	private readonly SqliteConnection _connection;
 	private readonly TimeProvider _timeProvider;
 
-	public readonly AttributeSet Attributes;
 	public readonly ItemSet Items;
 
 	public DatabaseContext(string connectionString, TimeProvider? timeProvider = null)
@@ -23,8 +22,7 @@ public sealed class DatabaseContext
 		_connection.Close();
 
 		RunMigrations();
-
-		Attributes = new AttributeSet(_connection, _timeProvider);
+		
 		Items = new ItemSet(_connection, _timeProvider);
 	}
 

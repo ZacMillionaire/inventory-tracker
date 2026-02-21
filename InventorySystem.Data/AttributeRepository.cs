@@ -7,14 +7,12 @@ namespace InventorySystem.Data;
 
 public class AttributeRepository : IAttributeRepository
 {
-	private readonly DatabaseContext _database;
 	private readonly IDocumentSession _documentSession;
 	private readonly TimeProvider _timeProvider;
 
-	public AttributeRepository(TimeProvider timeProvider, DatabaseContext dataStorge, IDocumentSession documentSession)
+	public AttributeRepository(TimeProvider timeProvider, IDocumentSession documentSession)
 	{
 		_timeProvider = timeProvider;
-		_database = dataStorge;
 		_documentSession = documentSession;
 	}
 
