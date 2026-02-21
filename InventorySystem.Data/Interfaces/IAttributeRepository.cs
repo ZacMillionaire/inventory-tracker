@@ -6,5 +6,5 @@ public interface IAttributeRepository
 {
 	List<AttributeDto> Get();
 	bool AttributeExistsByName(string attributeName);
-	AttributeDto Create(CreateAttributeDto attribute);
+	Task<AttributeDto> Create(CreateAttributeDto attribute);
 }

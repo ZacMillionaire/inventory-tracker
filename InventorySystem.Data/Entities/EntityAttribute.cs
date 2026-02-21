@@ -4,7 +4,7 @@ using InventorySystem.Data.Enums;
 namespace InventorySystem.Data.Entities;
 
 [Table("Attributes")]
-internal class EntityAttribute : BaseEntity
+public class EntityAttribute : BaseEntity
 {
 	/// <summary>
 	/// Display name

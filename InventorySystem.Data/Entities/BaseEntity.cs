@@ -1,6 +1,6 @@
 ﻿namespace InventorySystem.Data.Entities;
 
-internal abstract class BaseEntity
+public abstract class BaseEntity
 {
 	public Guid Id { get; set; }
 	public DateTimeOffset CreatedUtc { get; set; }
