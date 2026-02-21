@@ -41,21 +41,24 @@ public sealed class AttributeCreateTests : IDisposable
 	[Fact]
 	public async Task GET_Returns_Attributes()
 	{
-		var client = _apiWebApplicationFactory.CreateClient();
-		var ctx = _apiWebApplicationFactory.Context;
-
 		var now = _apiWebApplicationFactory.TimeProvider.GetUtcNow();
 
-		// Create an attribute directly with explicit values
-		// This sort of results in a test testing that the values we set are the values we set but that's the intent here
-		ctx.Attributes.CreateEntity(new()
+		await using (var scope = _apiWebApplicationFactory.Services.CreateAsyncScope())
 		{
-			Name = "String Attribute",
-			KeyName = "string_attribute",
-			Type = AttributeType.String,
-			Id = Guid.CreateVersion7(now),
-			CreatedUtc = now
-		});
+			AttributeRepository attributeRepository = (AttributeRepository)scope.ServiceProvider.GetRequiredService<IAttributeRepository>();
+			// Create an attribute directly with explicit values
+			// This sort of results in a test testing that the values we set are the values we set but that's the intent here
+			await attributeRepository.CreateAsyncImpl(new()
+			{
+				Name = "String Attribute",
+				KeyName = "string_attribute",
+				Type = AttributeType.String,
+				Id = Guid.CreateVersion7(_apiWebApplicationFactory.TimeProvider.GetUtcNow()),
+				CreatedUtc = now
+			});
+		}
+
+		var client = _apiWebApplicationFactory.CreateClient();
 
 		var response = await client.GetAsync("/attributes");
 		Assert.Equal(HttpStatusCode.OK, response.StatusCode);
