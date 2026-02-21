@@ -4,11 +4,16 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using InventorySystem.Data.Enums;
 using InventorySystem.Data.Models;
+using Xunit.Abstractions;
 
 namespace InventorySystem.Tests.Api.Items;
 
 public sealed class ItemCreateTests : ApiTestBase
 {
+	public ItemCreateTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+	{
+	}
+
 	[Fact]
 	public async Task GET_Returns_NoItems()
 	{
@@ -161,9 +166,9 @@ public class ApiTestBase : IDisposable
 	private readonly JsonSerializerOptions _jsonOptions;
 	protected readonly ApiWebApplicationFactory ApiWebApplicationFactory;
 
-	public ApiTestBase()
+	public ApiTestBase(ITestOutputHelper testOutputHelper)
 	{
-		ApiWebApplicationFactory = new ApiWebApplicationFactory();
+		ApiWebApplicationFactory = new ApiWebApplicationFactory(testOutputHelper);
 		_jsonOptions = new JsonSerializerOptions()
 		{
 			PropertyNameCaseInsensitive = true,

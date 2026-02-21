@@ -5,12 +5,15 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Npgsql;
+using Xunit.Abstractions;
 
 namespace InventorySystem.Tests.Api;
 
 public class ApiWebApplicationFactory : WebApplicationFactory<InventorySystemApi>
 {
+	private readonly ITestOutputHelper _testOutputHelper;
 	private DbContextHelper? _context;
 	private readonly string _generatedDatabaseFolder = "./GeneratedTestDatabases";
 
@@ -19,14 +22,29 @@ public class ApiWebApplicationFactory : WebApplicationFactory<InventorySystemApi
 	internal string? DatabaseName;
 	internal TimeProvider TimeProvider = TimeProvider.System;
 
+	private TestLoggerProvider _loggerProvider;
+	private ILogger _logger;
+
+	public ApiWebApplicationFactory(ITestOutputHelper testOutputHelper)
+	{
+		_testOutputHelper = testOutputHelper;
+		_loggerProvider = new TestLoggerProvider(_testOutputHelper);
+		_logger = _loggerProvider.CreateLogger("ApiWebApplicationFactory");
+	}
+
 	internal ApiWebApplicationFactory Configure(Action<ApiWebApplicationFactory> config)
 	{
 		config(this);
 		return this;
 	}
-	
+
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
 	{
+		builder.ConfigureLogging(loggingBuilder =>
+		{
+			loggingBuilder.Services.AddSingleton<ILoggerProvider>(serviceProvider => _loggerProvider);
+		});
+
 		Directory.CreateDirectory(_generatedDatabaseFolder);
 
 		var connectionString = $"Data Source={_generatedDatabaseFolder}/{DatabaseName ?? Guid.NewGuid().ToString()}.db";
@@ -42,7 +60,7 @@ public class ApiWebApplicationFactory : WebApplicationFactory<InventorySystemApi
 		};
 
 		Environment.SetEnvironmentVariable($"ConnectionStrings__{EnvironmentKeys.PostgresDbEnvironmentKey}", npgsqlConnectionStringBuilder.ToString());
-		
+
 		_context ??= new DbContextHelper(connectionString, TimeProvider);
 
 		// Is be called after the `ConfigureServices` from the Startup
@@ -56,9 +74,11 @@ public class ApiWebApplicationFactory : WebApplicationFactory<InventorySystemApi
 
 	public override ValueTask DisposeAsync()
 	{
+		_logger.LogInformation("Cleaning document store");
 		var store = Services.GetRequiredService<IDocumentStore>();
 		// Ensure our database is clean
-		store.Advanced.Clean.DeleteAllDocumentsAsync();
+		store.Advanced.Clean.DeleteAllDocumentsAsync().Wait();
+		_logger.LogInformation("Done");
 		return base.DisposeAsync();
 	}
 
