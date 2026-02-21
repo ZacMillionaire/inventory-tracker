@@ -18,9 +18,12 @@ public class AttributeRepository : IAttributeRepository
 		_documentSession = documentSession;
 	}
 
-	public List<AttributeDto> Get()
+	public async Task<List<AttributeDto>> Get()
 	{
-		return _database.Attributes.GetAttributes();
+		var attributes = await _documentSession.Query<EntityAttribute>()
+			.ToListAsync();
+
+		return attributes.Select(ToDto).ToList();
 	}
 
 	public async Task<bool> AttributeExistsByName(string attributeName)

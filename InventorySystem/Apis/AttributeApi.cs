@@ -12,7 +12,7 @@ namespace InventorySystem.Apis;
 public class AttributeApiRoutes
 {
 	[ApiGet("/")]
-	public static Ok<List<AttributeDto>> GetAttribute(IAttributeRepository repo) => TypedResults.Ok(repo.Get());
+	public static async Task<Ok<List<AttributeDto>>> GetAttribute(IAttributeRepository repo) => TypedResults.Ok(await repo.Get());
 
 	[ApiPost("Create")]
 	public static async Task<Results<Ok<AttributeDto>, BadRequest>> CreateAttribute(IAttributeRepository repo, [FromBody] CreateAttributeDto dto) =>
