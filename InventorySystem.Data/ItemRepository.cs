@@ -18,7 +18,7 @@ public class ItemRepository
 		_documentSession = documentSession;
 	}
 
-	public ItemDto Create(CreateItemRequestDto newItem)
+	public async Task<ItemDto> Create(CreateItemRequestDto item)
 	{
 		// var itemDto = new Item()
 		// {
@@ -27,9 +27,25 @@ public class ItemRepository
 		// 	Attributes = AttributeValueDtoToAttribute(newItem.AttributeValues)
 		// };
 
-		var createdItem = _database.Items.CreateItem(newItem.Name, newItem.Description /*, TODO: attributes */);
+		// TODO: link attributes and create values
+		var newItem = await CreateAsyncImpl(new Item()
+		{
+			Name = item.Name,
+			Description = item.Description,
+			CreatedUtc = _timeProvider.GetUtcNow(),
+			Id = Guid.CreateVersion7(_timeProvider.GetUtcNow())
+		});
 
-		return ToDto(createdItem);
+		return ToDto(newItem);
+	}
+
+	internal async Task<Item> CreateAsyncImpl(Item item)
+	{
+		_documentSession.Store(item);
+
+		await _documentSession.SaveChangesAsync();
+
+		return item;
 	}
 
 	private List<EntityAttribute> AttributeValueDtoToAttribute(List<AttributeValueDto> attributeValueDto)

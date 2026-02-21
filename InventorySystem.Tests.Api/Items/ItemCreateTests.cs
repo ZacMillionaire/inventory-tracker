@@ -2,8 +2,11 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using InventorySystem.Data;
+using InventorySystem.Data.Entities;
 using InventorySystem.Data.Enums;
 using InventorySystem.Data.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
 
 namespace InventorySystem.Tests.Api.Items;
@@ -40,6 +43,17 @@ public sealed class ItemCreateTests : ApiTestBase
 	{
 		var timeProvider = new TestTimeProvider(DateTimeOffset.Now);
 
+		await using var scope = ApiWebApplicationFactory.Services.CreateAsyncScope();
+		ItemRepository itemRepository = (ItemRepository)scope.ServiceProvider.GetRequiredService<ItemRepository>();
+
+		var createdItem = await itemRepository.CreateAsyncImpl(new Item()
+		{
+			Name = "Item 1",
+			Description = "Created First",
+			CreatedUtc = timeProvider.GetUtcNow(),
+			Id = Guid.CreateVersion7(timeProvider.GetUtcNow())
+		});
+
 		var client = ApiWebApplicationFactory
 			.Configure(config =>
 			{
@@ -47,9 +61,6 @@ public sealed class ItemCreateTests : ApiTestBase
 				config.TimeProvider = timeProvider;
 			})
 			.CreateClient();
-
-		var context = ApiWebApplicationFactory.Context;
-		var createdItem = context.Items.CreateItem("Item 1", "Created First");
 
 		var response = await GetAsync(client, "/items");
 		Assert.Equal(HttpStatusCode.OK, response.StatusCode);

@@ -8,11 +8,12 @@ namespace InventorySystem.Apis;
 [ApiGroup("items")]
 public class ItemApiRoutes
 {
+	// TODO: wrap in a TypedResults
 	[ApiGet("/")]
 	public static async Task<List<ItemDto>> GetItems(ItemRepository repo) => await repo.Get();
 
 	[ApiPost("Create")]
-	public static ItemDto CreateItem(ItemRepository repo, [FromBody] CreateItemRequestDto dto) => repo.Create(dto);
+	public static async Task<ItemDto> CreateItem(ItemRepository repo, [FromBody] CreateItemRequestDto dto) => await repo.Create(dto);
 }
 
 [JsonSerializable(typeof(ItemDto))]
