@@ -35,6 +35,8 @@ public class ApiWebApplicationFactory : WebApplicationFactory<InventorySystemApi
 			loggingBuilder.Services.AddSingleton<ILoggerProvider>(serviceProvider => _loggerProvider);
 		});
 
+		builder.UseEnvironment("Test");
+
 		// set up the connection string for postgres, settings from ./Containers/docker-compose.yml
 		var npgsqlConnectionStringBuilder = new NpgsqlConnectionStringBuilder()
 		{
@@ -55,12 +57,12 @@ public class ApiWebApplicationFactory : WebApplicationFactory<InventorySystemApi
 		});
 	}
 
-	public override async ValueTask DisposeAsync()
+	public override ValueTask DisposeAsync()
 	{
 		_logger.LogInformation("Cleaning document store");
-		await ClearAllDocuments();
+		ClearAllDocuments().Wait();
 		_logger.LogInformation("Done");
-		await base.DisposeAsync();
+		return base.DisposeAsync();
 	}
 
 	public async Task ClearAllDocuments()

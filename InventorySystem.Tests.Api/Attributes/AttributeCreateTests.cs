@@ -1,7 +1,4 @@
 ﻿using System.Net;
-using System.Net.Http.Json;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using InventorySystem.Data;
 using InventorySystem.Data.Enums;
 using InventorySystem.Data.Interfaces;
@@ -10,27 +7,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace InventorySystem.Tests.Api.Attributes;
 
-public sealed class AttributeCreateTests : IDisposable
+public sealed class AttributeCreateTests : ApiTestBase
 {
-	private readonly JsonSerializerOptions _jsonOptions;
-	private readonly ApiWebApplicationFactory _apiWebApplicationFactory;
-
-	public AttributeCreateTests()
-	{
-		_apiWebApplicationFactory = new ApiWebApplicationFactory();
-		_jsonOptions = new JsonSerializerOptions()
-		{
-			PropertyNameCaseInsensitive = true,
-		};
-		_jsonOptions.Converters.Add(new JsonStringEnumConverter<AttributeType>());
-	}
-
 	[Fact]
 	public async Task GET_Returns_NoAttributes()
 	{
-		var client = _apiWebApplicationFactory.CreateClient();
+		var client = ApiWebApplicationFactory.CreateClient();
 
-		var response = await client.GetAsync("/attributes");
+		var response = await GetAsync(client, "/attributes");
 		Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
 		var body = await ReadResponseJson<List<AttributeDto>>(response);
@@ -41,9 +25,9 @@ public sealed class AttributeCreateTests : IDisposable
 	[Fact]
 	public async Task GET_Returns_Attributes()
 	{
-		var now = _apiWebApplicationFactory.TimeProvider.GetUtcNow();
+		var now = ApiWebApplicationFactory.TimeProvider.GetUtcNow();
 
-		await using (var scope = _apiWebApplicationFactory.Services.CreateAsyncScope())
+		await using (var scope = ApiWebApplicationFactory.Services.CreateAsyncScope())
 		{
 			AttributeRepository attributeRepository = (AttributeRepository)scope.ServiceProvider.GetRequiredService<IAttributeRepository>();
 			// Create an attribute directly with explicit values
@@ -53,14 +37,14 @@ public sealed class AttributeCreateTests : IDisposable
 				Name = "String Attribute",
 				KeyName = "string_attribute",
 				Type = AttributeType.String,
-				Id = Guid.CreateVersion7(_apiWebApplicationFactory.TimeProvider.GetUtcNow()),
+				Id = Guid.CreateVersion7(ApiWebApplicationFactory.TimeProvider.GetUtcNow()),
 				CreatedUtc = now
 			});
 		}
 
-		var client = _apiWebApplicationFactory.CreateClient();
+		var client = ApiWebApplicationFactory.CreateClient();
 
-		var response = await client.GetAsync("/attributes");
+		var response = await GetAsync(client, "/attributes");
 		Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
 		var body = await ReadResponseJson<List<AttributeDto>>(response);
@@ -80,18 +64,18 @@ public sealed class AttributeCreateTests : IDisposable
 	{
 		var timeProvider = new TestTimeProvider(DateTimeOffset.Now);
 
-		var client = _apiWebApplicationFactory
+		var client = ApiWebApplicationFactory
 			.Configure(config =>
 			{
 				config.TimeProvider = timeProvider;
 			})
 			.CreateClient();
 
-		var response = await client.PostAsJsonAsync("/attributes/create", new CreateAttributeDto()
+		var response = await PostAsJsonAsync(client, "/attributes/create", new CreateAttributeDto()
 		{
 			Name = "String Attribute",
 			Type = AttributeType.String
-		}, _jsonOptions);
+		});
 
 		Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -110,7 +94,7 @@ public sealed class AttributeCreateTests : IDisposable
 	public async Task POST_ForExistingName_ReturnsBadRequest()
 	{
 		// Directly create an entity to conflict against
-		await using (var scope = _apiWebApplicationFactory.Services.CreateAsyncScope())
+		await using (var scope = ApiWebApplicationFactory.Services.CreateAsyncScope())
 		{
 			AttributeRepository attributeRepository = (AttributeRepository)scope.ServiceProvider.GetRequiredService<IAttributeRepository>();
 
@@ -119,27 +103,17 @@ public sealed class AttributeCreateTests : IDisposable
 				Name = "String Attribute",
 				KeyName = "string_attribute",
 				Type = AttributeType.String,
-				Id = Guid.CreateVersion7(_apiWebApplicationFactory.TimeProvider.GetUtcNow())
+				Id = Guid.CreateVersion7(ApiWebApplicationFactory.TimeProvider.GetUtcNow())
 			});
 		}
 
-		var client = _apiWebApplicationFactory.CreateClient();
-		var response2 = await client.PostAsJsonAsync("/attributes/create", new CreateAttributeDto()
+		var client = ApiWebApplicationFactory.CreateClient();
+		var response2 = await PostAsJsonAsync(client, "/attributes/create", new CreateAttributeDto()
 		{
 			Name = "String Attribute",
 			Type = AttributeType.String
-		}, _jsonOptions);
+		});
 
 		Assert.Equal(HttpStatusCode.BadRequest, response2.StatusCode);
-	}
-
-	private Task<T?> ReadResponseJson<T>(HttpResponseMessage response)
-	{
-		return response.Content.ReadFromJsonAsync<T>(_jsonOptions);
-	}
-
-	public void Dispose()
-	{
-		_apiWebApplicationFactory.Dispose();
 	}
 }
