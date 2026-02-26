@@ -5,7 +5,11 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>disable</ImplicitUsings>
         <InvariantGlobalization>true</InvariantGlobalization>
-        <PublishAot>true</PublishAot>
+        <!--
+         disabled for now, MartenDB ain't happy with it and refuses to start because it can't dynamically
+         generate code even if types already exist
+         -->
+        <!-- <PublishAot>true</PublishAot>-->
     </PropertyGroup>
 
     <ItemGroup>
