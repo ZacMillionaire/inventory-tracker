@@ -7,7 +7,6 @@ using InventorySystem.Data.Enums;
 using InventorySystem.Data.Interfaces;
 using InventorySystem.Data.Models;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit.Abstractions;
 
 namespace InventorySystem.Tests.Api.Attributes;
 
@@ -16,9 +15,9 @@ public sealed class AttributeCreateTests : IDisposable
 	private readonly JsonSerializerOptions _jsonOptions;
 	private readonly ApiWebApplicationFactory _apiWebApplicationFactory;
 
-	public AttributeCreateTests(ITestOutputHelper testOutputHelper)
+	public AttributeCreateTests()
 	{
-		_apiWebApplicationFactory = new ApiWebApplicationFactory(testOutputHelper);
+		_apiWebApplicationFactory = new ApiWebApplicationFactory();
 		_jsonOptions = new JsonSerializerOptions()
 		{
 			PropertyNameCaseInsensitive = true,

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Npgsql;
-using Xunit.Abstractions;
 
 namespace InventorySystem.Tests.Api;
 
@@ -17,9 +16,9 @@ public class ApiWebApplicationFactory : WebApplicationFactory<InventorySystemApi
 	private readonly TestLoggerProvider _loggerProvider;
 	private readonly ILogger _logger;
 
-	public ApiWebApplicationFactory(ITestOutputHelper testOutputHelper)
+	public ApiWebApplicationFactory()
 	{
-		_loggerProvider = new TestLoggerProvider(testOutputHelper);
+		_loggerProvider = new TestLoggerProvider();
 		_logger = _loggerProvider.CreateLogger("ApiWebApplicationFactory");
 	}
 
@@ -56,14 +55,19 @@ public class ApiWebApplicationFactory : WebApplicationFactory<InventorySystemApi
 		});
 	}
 
-	public override ValueTask DisposeAsync()
+	public override async ValueTask DisposeAsync()
 	{
 		_logger.LogInformation("Cleaning document store");
+		await ClearAllDocuments();
+		_logger.LogInformation("Done");
+		await base.DisposeAsync();
+	}
+
+	public async Task ClearAllDocuments()
+	{
 		var store = Services.GetRequiredService<IDocumentStore>();
 		// Ensure our database is clean
-		store.Advanced.Clean.DeleteAllDocumentsAsync().Wait();
-		_logger.LogInformation("Done");
-		return base.DisposeAsync();
+		await store.Advanced.Clean.DeleteAllDocumentsAsync();
 	}
 
 	protected override void Dispose(bool disposing)

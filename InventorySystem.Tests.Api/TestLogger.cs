@@ -1,22 +1,19 @@
 ﻿using System.Text;
 using Microsoft.Extensions.Logging;
-using Xunit.Abstractions;
 
 namespace InventorySystem.Tests.Api;
 
 // https://www.meziantou.net/how-to-get-asp-net-core-logs-in-the-output-of-xunit-tests.htm
 internal class TestLogger : ILogger
 {
-	private readonly ITestOutputHelper _testOutputHelper;
 	private readonly string _categoryName;
 	private readonly LoggerExternalScopeProvider _scopeProvider;
 
-	public static ILogger CreateLogger(ITestOutputHelper testOutputHelper) => new TestLogger(testOutputHelper, new LoggerExternalScopeProvider(), "");
-	public static ILogger<T> CreateLogger<T>(ITestOutputHelper testOutputHelper) => new TestLogger<T>(testOutputHelper, new LoggerExternalScopeProvider());
+	public static ILogger CreateLogger(ITestOutputHelper testOutputHelper) => new TestLogger(new LoggerExternalScopeProvider(), "");
+	public static ILogger<T> CreateLogger<T>(ITestOutputHelper testOutputHelper) => new TestLogger<T>( new LoggerExternalScopeProvider());
 
-	public TestLogger(ITestOutputHelper testOutputHelper, LoggerExternalScopeProvider scopeProvider, string categoryName)
+	public TestLogger(LoggerExternalScopeProvider scopeProvider, string categoryName)
 	{
-		_testOutputHelper = testOutputHelper;
 		_scopeProvider = scopeProvider;
 		_categoryName = categoryName;
 	}
@@ -44,7 +41,7 @@ internal class TestLogger : ILogger
 			state.Append(scope);
 		}, sb);
 
-		_testOutputHelper.WriteLine(sb.ToString());
+		TestContext.Current.TestOutputHelper?.WriteLine(sb.ToString());
 	}
 
 	private static string GetLogLevelString(LogLevel logLevel)
@@ -64,25 +61,23 @@ internal class TestLogger : ILogger
 
 internal sealed class TestLogger<T> : TestLogger, ILogger<T>
 {
-	public TestLogger(ITestOutputHelper testOutputHelper, LoggerExternalScopeProvider scopeProvider)
-		: base(testOutputHelper, scopeProvider, typeof(T).FullName)
+	public TestLogger(LoggerExternalScopeProvider scopeProvider)
+		: base(scopeProvider, typeof(T).FullName)
 	{
 	}
 }
 
-internal sealed class TestLoggerProvider : ILoggerProvider
+public sealed class TestLoggerProvider : ILoggerProvider
 {
-	private readonly ITestOutputHelper _testOutputHelper;
 	private readonly LoggerExternalScopeProvider _scopeProvider = new LoggerExternalScopeProvider();
 
-	public TestLoggerProvider(ITestOutputHelper testOutputHelper)
+	public TestLoggerProvider()
 	{
-		_testOutputHelper = testOutputHelper;
 	}
 
 	public ILogger CreateLogger(string categoryName)
 	{
-		return new TestLogger(_testOutputHelper, _scopeProvider, categoryName);
+		return new TestLogger(_scopeProvider, categoryName);
 	}
 
 	public void Dispose()

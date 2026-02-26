@@ -7,16 +7,11 @@ using InventorySystem.Data.Entities;
 using InventorySystem.Data.Enums;
 using InventorySystem.Data.Models;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit.Abstractions;
 
 namespace InventorySystem.Tests.Api.Items;
 
 public sealed class ItemCreateTests : ApiTestBase
 {
-	public ItemCreateTests(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
-	{
-	}
-
 	[Fact]
 	public async Task GET_Returns_NoItems()
 	{
@@ -182,9 +177,9 @@ public class ApiTestBase : IDisposable
 	private readonly JsonSerializerOptions _jsonOptions;
 	protected readonly ApiWebApplicationFactory ApiWebApplicationFactory;
 
-	protected ApiTestBase(ITestOutputHelper testOutputHelper)
+	protected ApiTestBase()
 	{
-		ApiWebApplicationFactory = new ApiWebApplicationFactory(testOutputHelper);
+		ApiWebApplicationFactory = new ApiWebApplicationFactory();
 		_jsonOptions = new JsonSerializerOptions()
 		{
 			PropertyNameCaseInsensitive = true,
