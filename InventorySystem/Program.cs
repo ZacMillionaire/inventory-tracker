@@ -80,7 +80,7 @@ public class InventorySystemApi
 	{
 		services.AddScoped<ItemRepository>();
 		services.AddScoped<IAttributeRepository, AttributeRepository>();
-		services.AddSingleton<AttributeValueRepository>();
+		services.AddScoped<AttributeValueRepository>();
 	}
 
 	private static void MapApiRoutes(WebApplication app)
