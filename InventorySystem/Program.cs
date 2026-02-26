@@ -46,13 +46,21 @@ public class InventorySystemApi
 
 		builder.Services.CritterStackDefaults(options =>
 		{
-			// options.Development.GeneratedCodeMode = TypeLoadMode.Auto;
-			// options.Development.ResourceAutoCreate = AutoCreate.All;
+			// Ensure that types are always generated for development mode
+			options.Development.GeneratedCodeMode = TypeLoadMode.Auto;
+			options.Development.ResourceAutoCreate = AutoCreate.All;
+			
 			options.Production.GeneratedCodeMode = TypeLoadMode.Static;
 			options.Production.ResourceAutoCreate = AutoCreate.None;
-			
-			// options.Development.GeneratedCodeMode = TypeLoadMode.Static;
-			// options.Development.ResourceAutoCreate = AutoCreate.None;
+
+			// If we can help it we don't want to have long start ups for tests if we already have generated types.
+			// In saying this though, if generated types aren't up to date tests will still run,
+			// they'll just be a bit slower
+			if (builder.Environment.EnvironmentName == "Test")
+			{
+				options.Development.GeneratedCodeMode = TypeLoadMode.Static;
+				options.Development.ResourceAutoCreate = AutoCreate.None;
+			}
 		});
 
 		builder.AddServiceDefaults();
