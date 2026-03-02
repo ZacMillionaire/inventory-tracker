@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <!--
+         disabled for now, MartenDB ain't happy with it and refuses to start because it can't dynamically
+         generate code even if types already exist
+         -->
+        <!-- <PublishAot>true</PublishAot>-->
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Marten" Version="8.22.0" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1"/>
+        <PackageReference Include="Npgsql.DependencyInjection" Version="10.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\InventorySystem.Core\InventorySystem.Core.csproj" />
+        <ProjectReference Include="..\InventorySystem.Data\InventorySystem.Data.csproj"/>
+        <ProjectReference Include="..\InventorySystem.ServiceDefaults\InventorySystem.ServiceDefaults.csproj" />
+        <ProjectReference Include="..\SourceGeneration\InventorySystem.Api.SourceGenerator\InventorySystem.Api.SourceGenerator.csproj" OutputItemType="Analyzer"/>
+    </ItemGroup>
+
+</Project>
