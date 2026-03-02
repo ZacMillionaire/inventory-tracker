@@ -3,8 +3,11 @@ using InventorySystem.Core;
 var builder = DistributedApplication.CreateBuilder(args);
 
 var postgres = builder.AddPostgres("postgres")
-	.WithDataVolume(isReadOnly: false);
-var postgresdb = postgres.AddDatabase(EnvironmentKeys.PostgresDbEnvironmentKey);
+	.WithDataVolume(isReadOnly: false)
+	.ExcludeFromMcp();
+
+var postgresdb = postgres.AddDatabase(EnvironmentKeys.PostgresDbEnvironmentKey)
+	.ExcludeFromMcp();
 
 builder.AddProject<Projects.InventorySystem>("inventorysystem")
 	.WaitFor(postgresdb)
@@ -18,7 +21,6 @@ builder.AddProject<Projects.InventorySystem>("inventorysystem")
 		// context.EnvironmentVariables["POSTGRES_USER"] = postgres.Resource.UserNameParameter;
 		// context.EnvironmentVariables["POSTGRES_PASSWORD"] = postgres.Resource.PasswordParameter;
 		// context.EnvironmentVariables["POSTGRES_DATABASE"] = postgresdb.Resource.DatabaseName;
-	});
-;
+	})
+	.ExcludeFromMcp();
 
-builder.Build().Run();
