@@ -1,1 +1,7 @@
 .docs/.obsidian/workspace.json
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+/.idea

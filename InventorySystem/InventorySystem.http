@@ -1,0 +1,56 @@
+@InventorySystem_HostAddress = http://localhost:5259
+@ItemsApi = items
+@AttributesApi = attributes
+
+GET {{InventorySystem_HostAddress}}/todos/
+Accept: application/json
+
+###
+
+GET {{InventorySystem_HostAddress}}/todos/1
+Accept: application/json
+
+###
+
+POST {{InventorySystem_HostAddress}}/{{ItemsApi}}/Create
+Content-Type: application/json
+
+{
+  "Name" : "Item Name",
+  "Description": "Item Description",
+  "AttributeValues": [
+    {
+      "Type": "String",
+      "Value": "string value"
+    },
+    {
+      "Type": "Int",
+      "Value": 123
+    },
+    {
+      "Type": "Double",
+      "Value": 20
+    }
+  ]
+  
+}
+
+###
+
+POST {{InventorySystem_HostAddress}}/{{AttributesApi}}/Create
+Content-Type: application/json
+
+{
+  "Name" : "String Value",
+  "Type" : "String"
+}
+
+###
+
+POST {{InventorySystem_HostAddress}}/{{AttributesApi}}/Create
+Content-Type: application/json
+
+{
+  "Name" : "String Value",
+  "Type" : "String"
+}
