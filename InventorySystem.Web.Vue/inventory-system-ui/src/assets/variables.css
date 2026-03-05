@@ -1,0 +1,153 @@
+@layer variables {
+    :root {
+        /* 
+    generated from (in dark mode) https://www.radix-ui.com/colors/custom
+    accent: #0C0D10
+    gray: #242028
+    background: #222222
+    */
+        --accent-1: #242127;
+        --accent-2: #2b282e;
+        --accent-3: #332f38;
+        --accent-4: #3a3440;
+        --accent-5: #403a47;
+        --accent-6: #48424f;
+        --accent-7: #544e5b;
+        --accent-8: #6c6573;
+        --accent-9: #787180;
+        --accent-10: #847c8b;
+        --accent-11: #bab2c2;
+        --accent-12: #f0edf2;
+
+        --accent-a1: #7800f706;
+        --accent-a2: #c690fd0e;
+        --accent-a3: #c9a1fa1a;
+        --accent-a4: #d1a6fd23;
+        --accent-a5: #d4b1fe2b;
+        --accent-a6: #ddbfff34;
+        --accent-a7: #e4ccff42;
+        --accent-a8: #ebd8fe5e;
+        --accent-a9: #ecdbfe6d;
+        --accent-a10: #efdefd7a;
+        --accent-a11: #f4e9ffb9;
+        --accent-a12: #fdfafff0;
+
+        --accent-contrast: #ffffff;
+        --accent-surface: rgba(0, 0, 0, 0.05);
+        --accent-indicator: #787180;
+        --accent-track: #787180;
+
+        --gray-1: #212225;
+        --gray-2: #27292c;
+        --gray-3: #2f3136;
+        --gray-4: #35373c;
+        --gray-5: #3b3c42;
+        --gray-6: #424449;
+        --gray-7: #4e5056;
+        --gray-8: #66686e;
+        --gray-9: #71737a;
+        --gray-10: #64666c;
+        --gray-11: #b3b5bc;
+        --gray-12: #edeef1;
+
+        --gray-a1: #0022e204;
+        --gray-a2: #8db7f70c;
+        --gray-a3: #adc2f718;
+        --gray-a4: #c4d5ff1e;
+        --gray-a5: #cfd6ff25;
+        --gray-a6: #d8e3ff2d;
+        --gray-a7: #dde6ff3c;
+        --gray-a8: #e8edff58;
+        --gray-a9: #e8edfe66;
+        --gray-a10: #e5ebfd56;
+        --gray-a11: #f2f5ffb2;
+        --gray-a12: #fbfcffef;
+
+        --gray-contrast: #fff;
+        --gray-surface: #2c303680;
+        --gray-indicator: #71737a;
+        --gray-track: #71737a;
+
+        /* utilities */
+        --space-1: 4px;
+        --space-2: 8px;
+        --space-3: 12px;
+        --space-4: 16px;
+        --space-5: 20px;
+        --space-6: 24px;
+
+        /* named variables */
+        --main-background-colour: #222;
+        --component-background-acccent-level-1: var(--accent-a3);
+        --component-border-acccent-level-1: var(--accent-6);
+        --component-font-contrast: var(--accent-12);
+    }
+
+    @supports (color: color(display-p3 1 1 1)) {
+        @media (color-gamut: p3) {
+            :root {
+                --accent-1: oklch(25.2% 0.0123 307.8);
+                --accent-2: oklch(28.1% 0.0117 307.8);
+                --accent-3: oklch(31.4% 0.0159 307.8);
+                --accent-4: oklch(33.7% 0.0219 307.8);
+                --accent-5: oklch(36% 0.0239 307.8);
+                --accent-6: oklch(38.9% 0.0239 307.8);
+                --accent-7: oklch(43.4% 0.0239 307.8);
+                --accent-8: oklch(51.8% 0.0239 307.8);
+                --accent-9: oklch(56% 0.0239 307.8);
+                --accent-10: oklch(59.9% 0.0239 307.8);
+                --accent-11: oklch(77.6% 0.0239 307.8);
+                --accent-12: oklch(94.9% 0.0075 307.8);
+
+                --accent-a1: color(display-p3 0.3059 0 0.9882 / 0.023);
+                --accent-a2: color(display-p3 0.7059 0.5647 0.9922 / 0.055);
+                --accent-a3: color(display-p3 0.7882 0.6667 0.9922 / 0.096);
+                --accent-a4: color(display-p3 0.8157 0.6667 0.9922 / 0.132);
+                --accent-a5: color(display-p3 0.8314 0.7137 1 / 0.163);
+                --accent-a6: color(display-p3 0.8588 0.7608 0.9961 / 0.2);
+                --accent-a7: color(display-p3 0.8902 0.8157 1 / 0.254);
+                --accent-a8: color(display-p3 0.9255 0.8588 1 / 0.362);
+                --accent-a9: color(display-p3 0.9255 0.8706 1 / 0.421);
+                --accent-a10: color(display-p3 0.9412 0.8863 1 / 0.471);
+                --accent-a11: color(display-p3 0.9529 0.9176 0.9961 / 0.72);
+                --accent-a12: color(display-p3 0.9882 0.9765 1 / 0.942);
+
+                --accent-contrast: #ffffff;
+                --accent-surface: color(display-p3 0 0 0 / 5%);
+                --accent-indicator: oklch(56% 0.0239 307.8);
+                --accent-track: oklch(56% 0.0239 307.8);
+
+                --gray-1: oklch(25.2% 0.0066 271);
+                --gray-2: oklch(28% 0.0067 271);
+                --gray-3: oklch(31.3% 0.0094 271);
+                --gray-4: oklch(33.6% 0.0098 271);
+                --gray-5: oklch(35.8% 0.0098 271);
+                --gray-6: oklch(38.6% 0.0098 271);
+                --gray-7: oklch(43.1% 0.0098 271);
+                --gray-8: oklch(51.7% 0.0098 271);
+                --gray-9: oklch(55.7% 0.0098 271);
+                --gray-10: oklch(51.1% 0.0098 271);
+                --gray-11: oklch(77.4% 0.0098 271);
+                --gray-12: oklch(94.9% 0.0046 271);
+
+                --gray-a1: color(display-p3 0 0.1333 0.9765 / 0.014);
+                --gray-a2: color(display-p3 0.5608 0.7333 0.9882 / 0.046);
+                --gray-a3: color(display-p3 0.6941 0.7804 0.9961 / 0.091);
+                --gray-a4: color(display-p3 0.7686 0.8314 1 / 0.118);
+                --gray-a5: color(display-p3 0.8314 0.8588 0.9961 / 0.141);
+                --gray-a6: color(display-p3 0.8431 0.8902 1 / 0.177);
+                --gray-a7: color(display-p3 0.8824 0.9176 1 / 0.231);
+                --gray-a8: color(display-p3 0.9176 0.9412 1 / 0.34);
+                --gray-a9: color(display-p3 0.9176 0.9373 1 / 0.394);
+                --gray-a10: color(display-p3 0.9176 0.9412 1 / 0.331);
+                --gray-a11: color(display-p3 0.9569 0.9686 1 / 0.693);
+                --gray-a12: color(display-p3 0.9843 0.9882 1 / 0.937);
+
+                --gray-contrast: #fff;
+                --gray-surface: color(display-p3 0.1804 0.1882 0.2118 / 0.5);
+                --gray-indicator: oklch(55.7% 0.0098 271);
+                --gray-track: oklch(55.7% 0.0098 271);
+            }
+        }
+    }
+}

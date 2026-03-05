@@ -1,84 +1,80 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView } from 'vue-router';
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+    <div id="main">
+        <header>
+            <img alt="Vue logo" class="logo" src="@/assets/logo.svg" />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+            <nav class="navigation">
+                <RouterLink custom to="/" v-slot="{ isActive, href, navigate }">
+                    <div class="nav-item" :class="isActive ? 'active' : ''">
+                        <a v-bind="$attrs" :href="href" @click="navigate"> Home </a>
+                    </div>
+                </RouterLink>
+                <RouterLink custom to="/about" v-slot="{ isActive, href, navigate }">
+                    <div class="nav-item" :class="isActive ? 'active' : ''">
+                        <a v-bind="$attrs" :href="href" @click="navigate"> About </a>
+                    </div>
+                </RouterLink>
+                <RouterLink custom to="/style-guide" v-slot="{ isActive, href, navigate }">
+                    <div class="nav-item" :class="isActive ? 'active' : ''">
+                        <a v-bind="$attrs" :href="href" @click="navigate"> Style Guide </a>
+                    </div>
+                </RouterLink>
+            </nav>
+        </header>
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+        <div id="content">
+            <RouterView />
+        </div>
     </div>
-  </header>
-
-  <RouterView />
 </template>
 
 <style scoped>
+#main {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
 header {
-  line-height: 1.5;
-  max-height: 100vh;
+    min-height: 2rem;
+    max-height: 4vh;
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid var(--gray-6);
 }
-
 .logo {
-  display: block;
-  margin: 0 auto 2rem;
+    height: 100%;
 }
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
+.navigation {
     display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
+}
+.nav-item {
     display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+    align-items: center;
+    padding: var(--space-2);
+    & a {
+        color: var(--gray-11);
+        text-decoration: none;
+        font-weight: bold;
+        &:hover {
+            color: var(--gray-12);
+        }
+    }
+}
+.nav-item.active {
+    background-color: var(--accent-5);
+    & a {
+        color: var(--gray-12);
+    }
+}
+.nav-item:hover {
+    background-color: var(--gray-10);
+}
 
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+#content {
+    overflow: auto;
 }
 </style>
