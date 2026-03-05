@@ -8,7 +8,7 @@
     "preview": "vite preview",
     "build": "vite build",
     "type-check": "vue-tsc --build",
-    "lint:eslint": "eslint . --fix --cache"
+    "lint": "eslint . --fix --cache"
   },
   "dependencies": {
     "pinia": "^3.0.4",
@@ -16,6 +16,8 @@
     "vue-router": "^5.0.3"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.9.0",
     "@tsconfig/node24": "^24.0.4",
     "@types/node": "^24.11.0",
     "@vitejs/plugin-vue": "^6.0.4",
