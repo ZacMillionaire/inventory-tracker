@@ -1,6 +1,6 @@
 @layer variables {
     :root {
-        /* 
+        /*
     generated from (in dark mode) https://www.radix-ui.com/colors/custom
     accent: #0C0D10
     gray: #242028
@@ -78,8 +78,13 @@
 
         /* named variables */
         --main-background-colour: #222;
-        --component-background-acccent-level-1: var(--accent-a3);
-        --component-border-acccent-level-1: var(--accent-6);
+
+        --component-background-acccent: var(--accent-a3);
+        --component-border-acccent: var(--accent-6);
+
+        --component-background-gray: var(--gray-2);
+        --component-border-gray: var(--gray-6);
+
         --component-font-contrast: var(--accent-12);
     }
 
