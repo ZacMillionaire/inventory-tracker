@@ -13,6 +13,10 @@ const navigationRoutes = [
         name: DCardRouteNames.dCard.spacing,
         route: router.resolve({ name: DCardRouteNames.dCard.spacing }),
     },
+    {
+        name: DCardRouteNames.dCard.variants,
+        route: router.resolve({ name: DCardRouteNames.dCard.variants }),
+    },
 ];
 </script>
 <template>

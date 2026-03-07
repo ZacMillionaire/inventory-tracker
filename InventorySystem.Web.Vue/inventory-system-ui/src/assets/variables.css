@@ -80,10 +80,10 @@
         --main-background-colour: #222;
 
         --component-background-acccent: var(--accent-a3);
-        --component-border-acccent: var(--accent-6);
+        --component-border-acccent: var(--accent-a6);
 
-        --component-background-gray: var(--gray-2);
-        --component-border-gray: var(--gray-6);
+        --component-background-gray: var(--gray-a2);
+        --component-border-gray: var(--gray-a6);
 
         --component-font-contrast: var(--accent-12);
     }

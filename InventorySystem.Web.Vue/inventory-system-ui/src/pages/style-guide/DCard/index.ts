@@ -4,7 +4,8 @@ export const DCardRouteNames = {
     dCard :{
         index : 'style-guide-card',
         layout: 'style-guide-layout',
-        spacing: 'style-guide-spacing'
+        spacing: 'style-guide-spacing',
+        variants: 'style-guide-variants'
     }
 }
 
@@ -34,6 +35,14 @@ export const DCardRoutes :RouteRecordRaw[] = [
                 component : () => import('./Spacing.vue'),
                 meta : {
                     display: 'Spacing'
+                }
+            },
+            {
+                path: 'variants',
+                name: DCardRouteNames.dCard.variants,
+                component:()=>import('./Variants.vue'),
+                meta: {
+                    display: 'Variants'
                 }
             }
         ]

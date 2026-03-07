@@ -65,6 +65,8 @@
     h5,
     h6 {
         text-wrap: balance;
+        /* Reset the line-height for headings to be the same as the font-size */
+        line-height: 1;
     }
 
     /*
@@ -75,4 +77,3 @@
         isolation: isolate;
     }
 }
-
