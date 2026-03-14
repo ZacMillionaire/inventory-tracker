@@ -16,14 +16,14 @@ const formSubmit = (e: FormSubmit) => {
 
 // Bit of an ugly way to do form validation but whenever the validationState has any key added/changed,
 // this computed recalculates
-const formState = computed(() => {
+const formInvalid = computed(() => {
     console.log('recomputing validation state');
     for (const k in validationState.value) {
         if (!validationState.value[k]) {
-            return false;
+            return true;
         }
     }
-    return true;
+    return false;
 });
 
 const validationState = ref<{ [field: string]: boolean }>({
@@ -63,17 +63,16 @@ const validators = {
     <div class="new-item-form">
         <DForm @submit="(e) => formSubmit(e)">
             <DFormRow input-id="name">
-                <template #label> Name: </template>
+                <template #label> Name* </template>
                 <DTextInput id="name" placeholder="Name" v-model="formModel.itemName" :validation="validators.itemName" />
                 <template #input-hint>10 characters minimum</template>
             </DFormRow>
             <DFormRow input-id="description">
-                <template #label> Description: </template>
-                <DTextArea id="description" placeholder="Name" v-model="formModel.description" />
-                <template #input-hint>Description (optional)</template>
+                <template #label> Description </template>
+                <DTextArea id="description" placeholder="Description (optional)" v-model="formModel.description" />
             </DFormRow>
             <template #actions>
-                <button :disabled="!formState">Create</button>
+                <button :disabled="formInvalid">Create</button>
             </template>
         </DForm>
     </div>
