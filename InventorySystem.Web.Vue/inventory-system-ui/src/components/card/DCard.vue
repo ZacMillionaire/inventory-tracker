@@ -9,7 +9,7 @@ const padding = computed(() => (props.padding ? `p${props.padding}` : undefined)
 <template>
     <div class="card-container" :class="variant">
         <slot name="header" />
-        <div :class="padding">
+        <div class="card-content" :class="padding">
             <slot />
         </div>
     </div>
@@ -31,6 +31,9 @@ const padding = computed(() => (props.padding ? `p${props.padding}` : undefined)
     background-color: var(--component-background-gray);
     border: 1px solid var(--component-border-gray);
     color: var(--component-font-contrast);
+}
+
+.card-content {
 }
 
 .p1 {

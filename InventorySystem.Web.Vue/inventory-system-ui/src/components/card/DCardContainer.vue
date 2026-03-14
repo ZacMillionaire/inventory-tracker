@@ -17,7 +17,6 @@ const props = withDefaults(
 .card-grid-container {
     display: grid;
     gap: var(--space-1);
-    margin: var(--space-1);
 }
 .cols-1 {
     grid-template-columns: repeat(1, 1fr);
