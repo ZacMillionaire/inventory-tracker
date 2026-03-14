@@ -10,5 +10,6 @@ import { DCard, DCardContainer } from '@/components/card';
 </template>
 <style lang="css" scoped>
 .items {
+    padding: var(--space-2);
 }
 </style>
