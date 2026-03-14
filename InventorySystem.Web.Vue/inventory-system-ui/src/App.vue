@@ -11,10 +11,11 @@ import { StyleGuideRouteNames } from './pages/style-guide';
                 <img alt="Vue logo" class="logo" src="@/assets/logo.svg" />
             </template>
             <DHorizontalNavigationLink :to="{ name: 'home' }"> Home </DHorizontalNavigationLink>
+            <DHorizontalNavigationLink :to="{ name: 'item-index' }"> Items </DHorizontalNavigationLink>
             <DHorizontalNavigationLink :to="{ name: StyleGuideRouteNames.styleGuide.index }"> Style Guide </DHorizontalNavigationLink>
         </DHorizontalNavigationBar>
 
-        <div id="content">
+        <div id="content" class="full-height-no-scroll">
             <RouterView />
         </div>
     </div>
@@ -34,6 +35,5 @@ import { StyleGuideRouteNames } from './pages/style-guide';
     height: 100%;
 }
 #content {
-    overflow: auto;
 }
 </style>
