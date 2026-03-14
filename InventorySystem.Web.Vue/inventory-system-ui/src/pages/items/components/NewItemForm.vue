@@ -80,5 +80,7 @@ const validators = {
 <style lang="css" scoped>
 .new-item-form {
     padding: var(--space-2);
+    max-width: 1024px;
+    flex: 1 1 auto;
 }
 </style>

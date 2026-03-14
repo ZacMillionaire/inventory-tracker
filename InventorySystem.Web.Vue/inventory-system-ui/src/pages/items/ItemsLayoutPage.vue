@@ -40,6 +40,8 @@ import NewItemForm from './components/NewItemForm.vue';
 }
 .new-item-form-container {
     border-bottom: 1px solid var(--component-border-gray);
+    display: flex;
+    justify-content: center;
 }
 .items-content {
     overflow: auto;
