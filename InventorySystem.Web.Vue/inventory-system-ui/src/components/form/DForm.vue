@@ -21,6 +21,7 @@ const emits = defineEmits<{
 .form-container {
     display: grid;
     grid-template-columns: auto 1fr;
+    gap: var(--space-2);
 }
 .form-actions {
     grid-column: 2/-1;
