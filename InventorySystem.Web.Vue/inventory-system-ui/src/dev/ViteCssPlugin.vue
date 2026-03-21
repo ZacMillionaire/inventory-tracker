@@ -111,8 +111,21 @@ const cssVariableSearchResult = ref<cssSearchResult>({
     found: false,
 });
 
-const updateVariable = (cssVariable: string, value: string) => {
-    document.documentElement.style.setProperty(cssVariable, value);
+const updateVariable = (
+    cssVariable: string,
+    value: {
+        value: number;
+        unit: string;
+        computed: string;
+    },
+) => {
+    if (!currentVariables.value[cssVariable]) {
+        return;
+    }
+    currentVariables.value[cssVariable].value = value.value;
+    currentVariables.value[cssVariable].unit = value.unit as UnitType;
+
+    document.documentElement.style.setProperty(cssVariable, value.computed);
 };
 </script>
 <template>
