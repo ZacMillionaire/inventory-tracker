@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import CssValueRange from './CssValueRange.vue';
 
 const appCssVariables = ref<string[]>([]);
 const cssVariables = getComputedStyle(document.documentElement);
@@ -25,20 +26,60 @@ const filteredList = computed(() => {
     // return value === '' ? 'not found' : value;
 });
 
-const currentVariables = ref<{ [key: string]: { value: string; name: string; inputType: 'text' | 'range' | 'color' } }>({});
+type UnitType = 'px' | 'rem' | 'em' | '%';
+export interface CssVariable {
+    name: string;
+    value: number;
+    unit: UnitType;
+    type: 'size';
+}
+
+const currentVariables = ref<{ [key: string]: CssVariable }>({
+    '--space-1': {
+        name: '--space-1',
+        type: 'size',
+        unit: 'px',
+        value: 4,
+    },
+    '--small-font': {
+        name: '--small-font',
+        type: 'size',
+        unit: 'rem',
+        value: 0.75,
+    },
+});
 
 const addVariable = () => {
-    if (!cssVariableSearchResult.value.found) {
+    if (!cssVariableSearchResult.value.found || !cssVariableSearchResult.value.value || !cssVariableSearchResult.value.name) {
         return;
     }
 
-    currentVariables.value[cssVariable.value] = {
-        value: cssVariableSearchResult.value.value!,
-        name: cssVariableSearchResult.value.name!,
-        inputType: 'text',
-    };
+    const type = determineCssType(cssVariableSearchResult.value.name, cssVariableSearchResult.value.value);
+
+    currentVariables.value[cssVariable.value] = type;
+
+    // clear the search form and previously found css variable
+    // TODO: cleanup/remove this statefulness
     cssVariable.value = '';
     cssVariableSearchResult.value = { found: false };
+};
+
+const determineCssType = function (name: string, cssValue: string): CssVariable {
+    const pixelRegex = /^(\d+\.?\d+?)(px|em|rem)$/;
+    if (pixelRegex.test(cssValue)) {
+        const matches = cssValue.match(pixelRegex)!;
+
+        // we bang the indexes on matches as we've already asserted that both groups matched via
+        // the test above so we can trust they'll have a value
+        return {
+            name: name,
+            value: parseInt(matches[1]!, 10),
+            // technically not great to do this, but the regex should have ensured that the unit
+            // we matched on is part of this union type
+            unit: matches[2]! as UnitType,
+            type: 'size',
+        };
+    }
 };
 
 type cssSearchResult = {
@@ -90,16 +131,10 @@ const updateVariable = (cssVariable: string, value: string) => {
                 <div>{{ cssVariableSearchResult.value }}</div>
             </div>
         </div>
-        <div>
-            <div v-for="addedVariable in currentVariables" :key="addedVariable.name">
-                {{ addedVariable.name }}
-                <select v-model="addedVariable.inputType">
-                    <option value="text">Text</option>
-                    <option value="range">Slider</option>
-                    <option value="color">Colour</option>
-                </select>
-                <input :type="addedVariable.inputType" v-model="addedVariable.value" /><button @click="updateVariable(addedVariable.name, addedVariable.value)">update</button>
-            </div>
+        <div class="inputs">
+            <template v-for="addedVariable in currentVariables" :key="addedVariable.name">
+                <CssValueRange v-if="addedVariable.type === 'size'" :model-value="addedVariable" @value-change="(e) => updateVariable(addedVariable.name, e)" />
+            </template>
         </div>
     </div>
 </template>
@@ -111,6 +146,14 @@ const updateVariable = (cssVariable: string, value: string) => {
     border-bottom-left-radius: 5px;
     background-clip: border-box;
     padding: 8px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+}
+.inputs {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
 }
 </style>
 <style>
@@ -119,5 +162,6 @@ const updateVariable = (cssVariable: string, value: string) => {
     top: 0;
     right: 0;
     background-color: #000;
+    max-width: 20%;
 }
 </style>

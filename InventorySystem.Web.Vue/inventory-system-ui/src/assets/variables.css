@@ -86,6 +86,8 @@
         --component-border-gray: var(--gray-a6);
 
         --component-font-contrast: var(--accent-12);
+
+        --small-font: 0.75rem;
     }
 
     @supports (color: color(display-p3 1 1 1)) {
