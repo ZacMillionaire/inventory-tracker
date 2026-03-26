@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
 import { DHorizontalNavigationBar, DHorizontalNavigationLink } from '@/components/navigation';
-import { StyleGuideRouteNames } from './pages/style-guide';
 </script>
 
 <template>
@@ -12,7 +11,6 @@ import { StyleGuideRouteNames } from './pages/style-guide';
             </template>
             <DHorizontalNavigationLink :to="{ name: 'home' }"> Home </DHorizontalNavigationLink>
             <DHorizontalNavigationLink :to="{ name: 'item-index' }"> Items </DHorizontalNavigationLink>
-            <DHorizontalNavigationLink :to="{ name: StyleGuideRouteNames.styleGuide.index }"> Style Guide </DHorizontalNavigationLink>
         </DHorizontalNavigationBar>
 
         <div id="content" class="full-height-no-scroll">

@@ -5,13 +5,9 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
-import { installViteCssPlugin } from './dev/ViteCssPlugin'
 
-const app = createApp(App)
+const app = createApp(App);
 
 app.use(createPinia())
-app.use(router)
-
-app.mount('#app')
-
-installViteCssPlugin();
+    .use(router)
+    .mount('#app');

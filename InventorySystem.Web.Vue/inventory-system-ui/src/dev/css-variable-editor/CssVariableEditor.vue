@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import CssValueRange from './CssValueRange.vue';
+import { DScrollableContent } from '@/components/layout';
 
 const appCssVariables = ref<string[]>([]);
 const cssVariables = getComputedStyle(document.documentElement);
@@ -129,52 +130,46 @@ const updateVariable = (
 };
 </script>
 <template>
-    <div class="css-editor">
-        <div class="search">
-            <input type="text" v-model="cssVariable" />
-            <ul>
-                <li v-for="filter in filteredList" :key="filter" @click="() => (cssVariable = filter)">{{ filter }}</li>
-            </ul>
-            <div class="buttons">
-                <button @click="findVariable(cssVariable)">find</button>
-                <button @click="addVariable">add</button>
+    <DScrollableContent>
+        <div class="css-editor">
+            <div class="search">
+                <input type="text" v-model="cssVariable" />
+                <ul>
+                    <li v-for="filter in filteredList" :key="filter" @click="() => (cssVariable = filter)">{{ filter }}</li>
+                </ul>
+                <div class="buttons">
+                    <button @click="findVariable(cssVariable)">find</button>
+                    <button @click="addVariable">add</button>
+                </div>
+                <div v-if="cssVariableSearchResult.found">
+                    <div>{{ cssVariableSearchResult.name }}</div>
+                    <div>{{ cssVariableSearchResult.value }}</div>
+                </div>
             </div>
-            <div v-if="cssVariableSearchResult.found">
-                <div>{{ cssVariableSearchResult.name }}</div>
-                <div>{{ cssVariableSearchResult.value }}</div>
+            <div class="inputs">
+                <template v-for="addedVariable in currentVariables" :key="addedVariable.name">
+                    <CssValueRange v-if="addedVariable.type === 'size'" :model-value="addedVariable" @value-change="(e) => updateVariable(addedVariable.name, e)" />
+                </template>
             </div>
         </div>
-        <div class="inputs">
-            <template v-for="addedVariable in currentVariables" :key="addedVariable.name">
-                <CssValueRange v-if="addedVariable.type === 'size'" :model-value="addedVariable" @value-change="(e) => updateVariable(addedVariable.name, e)" />
-            </template>
-        </div>
-    </div>
+    </DScrollableContent>
 </template>
 <style lang="css" scoped>
 .css-editor {
-    border: none;
+    /* border: none;
     border-left: 1px solid #fff;
     border-bottom: 1px solid #fff;
     border-bottom-left-radius: 5px;
     background-clip: border-box;
+    width: 20%; */
     padding: 8px;
     display: flex;
     flex-direction: column;
-    flex: 1 1 auto;
+    max-width: 300px;
 }
 .inputs {
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
-}
-</style>
-<style>
-#__css-dev-tool__ {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background-color: #000;
-    max-width: 20%;
 }
 </style>

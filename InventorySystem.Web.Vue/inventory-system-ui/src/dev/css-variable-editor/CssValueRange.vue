@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import type { CssVariable } from './ViteCssPlugin.vue';
+import type { CssVariable } from './CssVariableEditor.vue';
 
 const props = defineProps<{ modelValue: CssVariable }>();
 
@@ -71,6 +71,10 @@ const reset = function () {
     </div>
 </template>
 <style lang="css" scoped>
+.container {
+    display: flex;
+    flex-direction: column;
+}
 .header {
     display: flex;
     flex-direction: row;
@@ -78,9 +82,8 @@ const reset = function () {
 }
 .input-container {
     flex: 1 1 auto;
-    width: 100%;
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 50% 50%;
 }
 .range-slider {
     grid-column: 1;

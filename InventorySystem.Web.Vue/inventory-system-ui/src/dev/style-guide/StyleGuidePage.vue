@@ -6,7 +6,7 @@ import { DScrollableContent } from '@/components/layout';
 <template>
     <DScrollableContent>
         <template #header>
-            <DHorizontalNavigationBar class="navigation">
+            <DHorizontalNavigationBar class="navigation" align-end>
                 <DHorizontalNavigationLink v-for="styleRoute of navigationRoutes" :key="styleRoute.name" :to="{ name: styleRoute.name }">
                     {{ styleRoute.displayName }}
                 </DHorizontalNavigationLink>
