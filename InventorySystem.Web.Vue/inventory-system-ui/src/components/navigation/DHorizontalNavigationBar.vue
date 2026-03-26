@@ -1,6 +1,8 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+withDefaults(defineProps<{ alignEnd?: boolean }>(), { alignEnd: false });
+</script>
 <template>
-    <header>
+    <header :class="[{ 'align-end': alignEnd }]">
         <slot name="logo" />
 
         <nav class="navigation-content">
@@ -21,5 +23,8 @@ header {
 .navigation-content {
     display: flex;
     flex: 0 0 auto;
+}
+.align-end {
+    justify-content: flex-end;
 }
 </style>
