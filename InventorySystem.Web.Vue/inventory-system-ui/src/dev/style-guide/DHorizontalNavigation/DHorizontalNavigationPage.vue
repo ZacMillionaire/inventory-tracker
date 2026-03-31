@@ -1,8 +1,13 @@
 <script setup lang="ts">
+import { DScrollableContent } from '@/components/layout';
+
 </script>
 <template>
-    <h1>Navigation</h1>
-    <RouterView/>
+    <DScrollableContent>
+        <template #header>
+            <h1>Navigation</h1>
+        </template>
+        <RouterView />
+    </DScrollableContent>
 </template>
-<style lang="css" scoped>
-</style>
+<style lang="css" scoped></style>
