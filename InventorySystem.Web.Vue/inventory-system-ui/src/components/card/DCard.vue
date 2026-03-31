@@ -18,7 +18,7 @@ const padding = computed(() => (props.padding ? `p${props.padding}` : undefined)
 .card-container {
     border-radius: 3px;
     align-items: baseline;
-    overflow: hidden;
+    overflow: auto;
 }
 
 .accent {
