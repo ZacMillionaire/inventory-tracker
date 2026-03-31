@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ItemRepository, type CreateItemRequestDto } from '@/api/items/ItemRepository';
 import { DCard } from '@/components/card';
 import { DForm, DFormRow, DTextArea, DTextInput, type FormSubmit, type ValidationEvents } from '@/components/form';
 import { computed, ref } from 'vue';
@@ -10,8 +11,16 @@ type formInput = {
 
 const formModel = ref<formInput>({});
 
-const formSubmit = (e: FormSubmit) => {
-    e.target.checkValidity();
+const formSubmit = async (e: FormSubmit) => {
+    if (e.target.checkValidity()) {
+        // const a = new FormData(e.target);
+        // console.log('valid lol', Object.fromEntries(a));
+        console.log('valid lol', formModel);
+        await ItemRepository().CreateItem({
+            name : formModel.value.itemName,
+            description: formModel.value.description
+        });
+    }
 };
 
 // Bit of an ugly way to do form validation but whenever the validationState has any key added/changed,
@@ -64,12 +73,12 @@ const validators = {
         <DForm @submit="(e) => formSubmit(e)">
             <DFormRow input-id="name">
                 <template #label> Name* </template>
-                <DTextInput id="name" placeholder="Name" v-model="formModel.itemName" :validation="validators.itemName" />
+                <DTextInput id="name" name="name" placeholder="Name" v-model="formModel.itemName" :validation="validators.itemName" />
                 <template #input-hint>10 characters minimum</template>
             </DFormRow>
             <DFormRow input-id="description">
                 <template #label> Description </template>
-                <DTextArea id="description" placeholder="Description (optional)" v-model="formModel.description" />
+                <DTextArea id="description" name="description" placeholder="Description (optional)" v-model="formModel.description" />
             </DFormRow>
             <template #actions>
                 <button :disabled="formInvalid">Create</button>

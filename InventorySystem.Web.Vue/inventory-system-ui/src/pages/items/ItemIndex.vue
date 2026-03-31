@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { DCard, DCardContainer } from '@/components/card';
+import { ItemRepository } from '@/api/items/ItemRepository';
+await ItemRepository().GetItems();
 </script>
 <template>
     <div class="items">
