@@ -8,7 +8,7 @@ const emits = defineEmits<{
 </script>
 <template>
     <div class="form-container">
-        <form @submit.prevent="(e) => emits('submit', e as FormSubmit)">
+        <form novalidate @submit.prevent="(e) => emits('submit', e as FormSubmit)" autocomplete="off">
             <slot />
             <div class="form-actions">
                 <slot name="actions" />

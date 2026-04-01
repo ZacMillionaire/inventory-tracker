@@ -1,26 +1,17 @@
 <script setup lang="ts">
-import { useTemplateRef } from 'vue';
-import type { InputType, ValidationEvents } from '..';
+import { useField } from 'vee-validate';
 
-const model = defineModel<InputType>();
 const props = defineProps<{
-    validation?: ValidationEvents;
+    name: string;
 }>();
 
-const validate = (validationFunc: (string: InputType) => { valid: boolean; message?: string }, input: InputType) => {
-    if (!props.validation || !inputRef.value) {
-        return;
-    }
-    const validationResult = validationFunc(input);
-
-    inputRef.value.setCustomValidity(validationResult.message ?? '');
-    inputRef.value.reportValidity();
-};
-
-const inputRef = useTemplateRef('input');
+const { value, errorMessage } = useField(() => props.name);
 </script>
 <template>
-    <input ref="input" type="text" class="input single-line-input" v-bind="$attrs" v-model="model" v-on:keyup="validation?.keyup ? validate(validation?.keyup, model) : undefined" />
+    <input ref="input" type="text" class="input single-line-input" :name="name" v-bind="$attrs" v-model="value" />
+    <span>
+        {{ errorMessage }}
+    </span>
 </template>
 <style lang="css" scoped>
 @import '../form.css';
