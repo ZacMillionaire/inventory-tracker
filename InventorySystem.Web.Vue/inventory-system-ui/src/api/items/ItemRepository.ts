@@ -1,17 +1,20 @@
 import ky from 'ky'
-
-interface CreateItemRequestDto {
-    name: string;
-    description? : string;
-}
+import type { CreateItemRequestDto } from './dtos/CreateItemRequestDto';
+import { ItemDtoSchema, type ItemDto } from './dtos/ItemDto';
+import * as z from 'zod';
 
 export function ItemRepository() {
 
     const apiUrl = import.meta.env.VITE_API_URL;
-    async function GetItems(){
-        await ky.get(`${apiUrl}/items`).json()
+
+    const itemDtoArraySchema = z.array(ItemDtoSchema);
+
+    async function GetItems() : Promise<ItemDto[]> {
+        return await ky.get(`${apiUrl}/items`)
+            .json<ItemDto[]>()
             .then(res => {
-                console.log(res)
+                const validatedResult = itemDtoArraySchema.parse(res) as ItemDto[];
+                return validatedResult;
             });
     }
 
@@ -27,5 +30,3 @@ export function ItemRepository() {
 
     return { GetItems, CreateItem }
 };
-
-export type { CreateItemRequestDto };

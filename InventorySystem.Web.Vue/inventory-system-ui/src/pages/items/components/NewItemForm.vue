@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ItemRepository, type CreateItemRequestDto } from '@/api/items/ItemRepository';
+import { ItemRepository } from '@/api/items';
 import { DCard } from '@/components/card';
 import { DForm, DFormRow, DTextArea, DTextInput, type FormSubmit, type ValidationEvents } from '@/components/form';
 import { computed, ref } from 'vue';
@@ -13,11 +13,9 @@ const formModel = ref<formInput>({});
 
 const formSubmit = async (e: FormSubmit) => {
     if (e.target.checkValidity()) {
-        // const a = new FormData(e.target);
-        // console.log('valid lol', Object.fromEntries(a));
-        console.log('valid lol', formModel);
         await ItemRepository().CreateItem({
-            name : formModel.value.itemName,
+            // The item name can be safely assumed to be valid by this stage
+            name : formModel.value.itemName!,
             description: formModel.value.description
         });
     }

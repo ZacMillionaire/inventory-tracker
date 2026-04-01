@@ -1,16 +1,9 @@
 <script setup lang="ts">
-import { DCard, DCardContainer } from '@/components/card';
-import { ItemRepository } from '@/api/items/ItemRepository';
-await ItemRepository().GetItems();
+import ItemListDisplay from './components/ItemListDisplay.vue';
 </script>
 <template>
-    <div class="items">
-        <DCardContainer columns="6">
-            <DCard v-for="t in 200" padding="3" :key="t">
-                <template #header> item {{ t }} </template>
-                <div class="type">example type</div>
-            </DCard>
-        </DCardContainer>
+    <div>
+        <ItemListDisplay/>
     </div>
 </template>
 <style lang="css" scoped>
