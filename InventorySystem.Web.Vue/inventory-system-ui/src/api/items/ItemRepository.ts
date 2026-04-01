@@ -18,13 +18,14 @@ export function ItemRepository() {
             });
     }
 
-    async function CreateItem(newItem : CreateItemRequestDto){
-        await ky.post(`${apiUrl}/items/create`,{
+    async function CreateItem(newItem : CreateItemRequestDto) : Promise<ItemDto> {
+        return await ky.post(`${apiUrl}/items/create`,{
             json: newItem
         })
-            .json()
+            .json<ItemDto>()
             .then(res => {
-                console.log('create response:',res);
+                const validatedResult = ItemDtoSchema.parse(res) as ItemDto;
+                return validatedResult;
             })
     }
 
