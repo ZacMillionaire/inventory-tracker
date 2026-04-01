@@ -1,85 +1,46 @@
 <script setup lang="ts">
 import { ItemRepository } from '@/api/items';
-import { DCard } from '@/components/card';
-import { DForm, DFormRow, DTextArea, DTextInput, type FormSubmit, type ValidationEvents } from '@/components/form';
-import { computed, ref } from 'vue';
+import { DForm, DFormRow, DTextArea, DTextInput } from '@/components/form';
+import { useForm } from 'vee-validate';
 
-type formInput = {
-    itemName?: string;
+const { handleSubmit, resetForm, meta } = useForm<{
+    name: string;
     description?: string;
-};
-
-const formModel = ref<formInput>({});
-
-const formSubmit = async (e: FormSubmit) => {
-    if (e.target.checkValidity()) {
-        await ItemRepository().CreateItem({
-            // The item name can be safely assumed to be valid by this stage
-            name : formModel.value.itemName!,
-            description: formModel.value.description
-        });
-    }
-};
-
-// Bit of an ugly way to do form validation but whenever the validationState has any key added/changed,
-// this computed recalculates
-const formInvalid = computed(() => {
-    console.log('recomputing validation state');
-    for (const k in validationState.value) {
-        if (!validationState.value[k]) {
-            return true;
-        }
-    }
-    return false;
-});
-
-const validationState = ref<{ [field: string]: boolean }>({
-    itemName: false,
-});
-
-const validators = {
-    itemName: {
-        keyup: (input?: string): { valid: boolean; message?: string } => {
-            const valid = input !== undefined && input.length > 10;
-            const validationMessage = !valid ? 'At least 10 characters' : undefined;
-
-            validationState.value['itemName'] = valid;
-
-            return {
-                valid: valid,
-                message: validationMessage,
-            };
-        },
-        // TODO: decide if I want to have on submit validators later
-        submit: (input?: string): { valid: boolean; message?: string } => {
-            if (input && input.length > 10) {
-                return {
-                    valid: false,
-                    message: 'nah just not really aye?',
-                };
+}>({
+    validationSchema: {
+        name: (name: string) => {
+            const valid = name !== undefined && name.length > 10;
+            if (!valid) {
+                return 'At least 10 characters';
             }
 
-            return {
-                valid: true,
-            };
+            return true;
         },
-    } as ValidationEvents,
-};
+    },
+});
+
+const formSubmit = handleSubmit(async (e) => {
+    await ItemRepository().CreateItem({
+        name: e.name,
+        description: e.description,
+    });
+    resetForm();
+});
 </script>
 <template>
     <div class="new-item-form">
         <DForm @submit="(e) => formSubmit(e)">
             <DFormRow input-id="name">
                 <template #label> Name* </template>
-                <DTextInput id="name" name="name" placeholder="Name" v-model="formModel.itemName" :validation="validators.itemName" />
+                <DTextInput name="name" placeholder="Name" />
                 <template #input-hint>10 characters minimum</template>
             </DFormRow>
             <DFormRow input-id="description">
                 <template #label> Description </template>
-                <DTextArea id="description" name="description" placeholder="Description (optional)" v-model="formModel.description" />
+                <DTextArea id="description" name="description" placeholder="Description (optional)" />
             </DFormRow>
             <template #actions>
-                <button :disabled="formInvalid">Create</button>
+                <button :disabled="!meta.valid">Create</button>
             </template>
         </DForm>
     </div>
