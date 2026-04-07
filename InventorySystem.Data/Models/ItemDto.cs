@@ -13,6 +13,7 @@ public class CreateItemRequestDto
 {
 	public required string Name { get; set; }
 	public string? Description { get; set; }
+	public bool CreateAsDistinct { get; set; }
 	public List<AttributeValueDto> AttributeValues { get; set; } = [];
 }
 

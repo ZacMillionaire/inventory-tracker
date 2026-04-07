@@ -30,7 +30,9 @@ public class ItemRepository
 			Name = item.Name,
 			Description = item.Description,
 			CreatedUtc = _timeProvider.GetUtcNow(),
-			Id = Guid.CreateVersion7(_timeProvider.GetUtcNow())
+			Distinct = item.CreateAsDistinct,
+			Id = Guid.CreateVersion7(_timeProvider.GetUtcNow()),
+			NormalisedName = NormaliseItemName(item.Name),
 		});
 
 		return ToDto(newItem);
@@ -38,6 +40,16 @@ public class ItemRepository
 
 	internal async Task<Item> CreateAsyncImpl(Item item)
 	{
+		// TODO: not a fan that this method is internal when it should be public but it's currently for testing
+		//  tbh I should just make a public method like CreateItemRaw so that I can keep the normalised name as internal
+		
+		// Check if any item exists by the normalised name and is marked as distinct. Distinct items can (go figure)
+		// only exist once
+		if (await _documentSession.Query<Item>().AnyAsync(x => x.NormalisedName == item.NormalisedName && x.Distinct))
+		{
+			throw new Exception("Item already exists as distinct");
+		}
+
 		_documentSession.Store(item);
 
 		await _documentSession.SaveChangesAsync();
@@ -77,6 +89,11 @@ public class ItemRepository
 		// 			.ToList()
 		// 	})
 		// 	.ToList();
+	}
+
+	internal string NormaliseItemName(string itemName)
+	{
+		return itemName.ToUpperInvariant();
 	}
 
 	private ItemDto ToDto(Item item)
