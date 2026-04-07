@@ -25,7 +25,12 @@ const formSubmit = handleSubmit(async (e) => {
         description: e.description,
     });
     resetForm();
+    emits('itemCreated');
 });
+
+const emits = defineEmits<{
+    itemCreated: [];
+}>();
 </script>
 <template>
     <div class="new-item-form">
