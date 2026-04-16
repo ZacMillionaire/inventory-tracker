@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ItemRepository } from '@/api/items';
+import { CreateItemRequestValidators } from '@/api/items/dtos/CreateItemRequestDto';
 import { DForm, DFormRow, DTextArea, DTextInput } from '@/components/form';
 import { useForm } from 'vee-validate';
+import * as z from 'zod';
 
 const { handleSubmit, resetForm, meta } = useForm<{
     name: string;
@@ -9,6 +11,21 @@ const { handleSubmit, resetForm, meta } = useForm<{
 }>({
     validationSchema: {
         name: (name: string) => {
+            if (name === undefined) {
+                return;
+            }
+            try {
+                // validate against the name rule
+                const validated = CreateItemRequestValidators.name.parse(name);
+            } catch (error) {
+                // if the exception was an error
+                if (error instanceof z.ZodError) {
+                    console.log(error.issues);
+                    // return the array of errors for the form row to loop over and display
+                    return error.issues.map((x) => x.message);
+                }
+            }
+            return true;
             const valid = name !== undefined && name.length > 10;
             if (!valid) {
                 return 'At least 10 characters';
