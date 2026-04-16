@@ -25,23 +25,27 @@ public class ItemRepository
 		// };
 
 		// TODO: link attributes and create values
-		var newItem = await CreateAsyncImpl(new Item()
+		var newItem = await CreateItem(new Item()
 		{
 			Name = item.Name,
 			Description = item.Description,
 			CreatedUtc = _timeProvider.GetUtcNow(),
 			Distinct = item.CreateAsDistinct,
 			Id = Guid.CreateVersion7(_timeProvider.GetUtcNow()),
-			NormalisedName = NormaliseItemName(item.Name),
 		});
 
 		return ToDto(newItem);
 	}
 
-	internal async Task<Item> CreateAsyncImpl(Item item)
+	/// <summary>
+	/// Creates an item
+	/// </summary>
+	/// <param name="item"></param>
+	/// <returns></returns>
+	/// <exception cref="Exception"></exception>
+	public async Task<Item> CreateItem(Item item)
 	{
-		// TODO: not a fan that this method is internal when it should be public but it's currently for testing
-		//  tbh I should just make a public method like CreateItemRaw so that I can keep the normalised name as internal
+		item.NormalisedName = NormaliseItemName(item.Name);
 		
 		// Check if any item exists by the normalised name and is marked as distinct. Distinct items can (go figure)
 		// only exist once

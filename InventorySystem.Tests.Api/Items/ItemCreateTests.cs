@@ -182,15 +182,13 @@ public sealed class ItemCreateTests : ApiTestBase
 		await using var scope = ApiWebApplicationFactory.Services.CreateAsyncScope();
 		var itemRepository = scope.ServiceProvider.GetRequiredService<ItemRepository>();
 
-		var createdItem = await itemRepository.CreateAsyncImpl(new Item()
+		var createdItem = await itemRepository.CreateItem(new Item()
 		{
 			Name = name,
 			Description = description,
 			CreatedUtc = timeProvider.GetUtcNow(),
 			Distinct = asDistinct,
 			Id = Guid.CreateVersion7(timeProvider.GetUtcNow()),
-			// TODO: make this property (and the normalise name method) internal and private respectively
-			NormalisedName = itemRepository.NormaliseItemName(name),
 		});
 
 		return createdItem;

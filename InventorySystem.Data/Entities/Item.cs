@@ -10,6 +10,6 @@ public class Item : BaseEntity
 	/// </summary>
 	public bool Distinct { get; set; }
 
-	public string NormalisedName { get; set; } = null!;
+	public string NormalisedName { get; internal set; } = null!;
 	// public List<EntityAttribute> Attributes { get; set; } = [];
 }
