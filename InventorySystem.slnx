@@ -1,4 +1,8 @@
 <Solution>
+  <Folder Name="/Aspire/">
+    <Project Path="InventorySystem.AppHost/InventorySystem.AppHost.csproj" />
+    <Project Path="InventorySystem.ServiceDefaults/InventorySystem.ServiceDefaults.csproj" />
+  </Folder>
   <Folder Name="/SolutionFiles/">
     <File Path="Directory.Build.targets" />
   </Folder>
@@ -9,9 +13,7 @@
   <Folder Name="/Tests/">
     <Project Path="InventorySystem.Tests.Api/InventorySystem.Tests.Api.csproj" />
   </Folder>
-  <Project Path="InventorySystem.AppHost/InventorySystem.AppHost.csproj" />
   <Project Path="InventorySystem.Core/InventorySystem.Core.csproj" />
   <Project Path="InventorySystem.Data/InventorySystem.Data.csproj" />
-  <Project Path="InventorySystem.ServiceDefaults/InventorySystem.ServiceDefaults.csproj" />
   <Project Path="InventorySystem/InventorySystem.csproj" />
 </Solution>
