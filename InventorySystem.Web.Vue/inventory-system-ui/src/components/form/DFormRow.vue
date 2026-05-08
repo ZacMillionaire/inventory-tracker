@@ -44,6 +44,7 @@ defineProps<{
     display: flex;
     align-items: stretch;
     flex-direction: column;
+    justify-content: center;
 }
 
 .field-hint {
