@@ -67,8 +67,7 @@ const emits = defineEmits<{
                 <DTextArea id="description" name="description" placeholder="Description (optional)" />
             </DFormRow>
             <DFormRow input-id="createAsDistinct">
-                <template #label>Distinct</template>
-                <DToggle id="createAsDistinct" name="createAsDistinct" />
+                <DToggle id="createAsDistinct" name="createAsDistinct"> Distinct? </DToggle>
             </DFormRow>
             <template #actions>
                 <button :disabled="!meta.valid">Create</button>
