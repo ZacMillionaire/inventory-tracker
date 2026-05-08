@@ -16,7 +16,7 @@ public class ItemApiRoutes
 	public static async Task<List<ItemDto>> GetItems(ItemRepository repo) => await repo.Get();
 
 	[ApiPost("Create")]
-	public static async Task<Results<Ok<ItemDto>, BadRequest<string>>> CreateItem(ItemRepository repo, [FromBody] CreateItemRequestDto dto)
+	public static async Task<Results<Ok<ItemDto>, BadRequest<Error>>> CreateItem(ItemRepository repo, [FromBody] CreateItemRequestDto dto)
 	{
 		try
 		{
@@ -24,7 +24,7 @@ public class ItemApiRoutes
 		}
 		catch (Exception ex)
 		{
-			return TypedResults.BadRequest(ex.Message);
+			return TypedResults.BadRequest(new Error() { Message = ex.Message });
 		}
 	}
 }
@@ -33,4 +33,10 @@ public class ItemApiRoutes
 [JsonSerializable(typeof(CreateItemRequestDto))]
 internal partial class ItemApiSerializerContext : JsonSerializerContext
 {
+}
+
+// TODO: fix the tests for this and make this class a bit better - I only hacked this in for some frontend stuff
+public class Error
+{
+	public required string Message { get; set; }
 }

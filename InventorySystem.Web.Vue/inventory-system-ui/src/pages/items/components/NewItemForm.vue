@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { ItemRepository } from '@/api/items';
-import { CreateItemRequestValidators } from '@/api/items/dtos/CreateItemRequestDto';
+import { CreateItemRequestValidators, type CreateItemRequestDto } from '@/api/items/dtos/CreateItemRequestDto';
 import { DForm, DFormRow, DTextArea, DTextInput } from '@/components/form';
+import DToggle from '@/components/form/input/DToggle.vue';
+import { isHTTPError } from 'ky';
 import { useForm } from 'vee-validate';
 import * as z from 'zod';
 
-const { handleSubmit, resetForm, meta } = useForm<{
-    name: string;
-    description?: string;
-}>({
+const { handleSubmit, resetForm, meta } = useForm<CreateItemRequestDto>({
     validationSchema: {
         name: (name: string) => {
             if (name === undefined) {
@@ -26,23 +25,29 @@ const { handleSubmit, resetForm, meta } = useForm<{
                 }
             }
             return true;
-            const valid = name !== undefined && name.length > 10;
-            if (!valid) {
-                return 'At least 10 characters';
-            }
-
-            return true;
         },
     },
 });
 
 const formSubmit = handleSubmit(async (e) => {
-    await ItemRepository().CreateItem({
-        name: e.name,
-        description: e.description,
-    });
-    resetForm();
-    emits('itemCreated');
+    try {
+        await ItemRepository()
+            .CreateItem({
+                name: e.name,
+                description: e.description,
+                createAsDistinct: e.createAsDistinct,
+            })
+            .then((res) => {
+                resetForm();
+                emits('itemCreated');
+            });
+    } catch (error) {
+        if (isHTTPError(error)) {
+            // have to await this response json because ????
+            // should do this in the repo instead
+            console.log(error.message, await error.response.json());
+        }
+    }
 });
 
 const emits = defineEmits<{
@@ -60,6 +65,10 @@ const emits = defineEmits<{
             <DFormRow input-id="description">
                 <template #label> Description </template>
                 <DTextArea id="description" name="description" placeholder="Description (optional)" />
+            </DFormRow>
+            <DFormRow input-id="createAsDistinct">
+                <template #label>Distinct</template>
+                <DToggle id="createAsDistinct" name="createAsDistinct" />
             </DFormRow>
             <template #actions>
                 <button :disabled="!meta.valid">Create</button>

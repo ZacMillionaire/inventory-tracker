@@ -6,6 +6,7 @@ public class ItemDto : BaseDto
 {
 	public required string Name { get; set; }
 	public string? Description { get; set; }
+	public bool Distinct { get; set; }
 	public List<AttributeDto> Attributes { get; set; } = [];
 }
 

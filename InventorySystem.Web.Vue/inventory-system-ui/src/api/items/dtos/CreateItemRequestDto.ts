@@ -4,6 +4,7 @@ import * as z from 'zod';
 export interface CreateItemRequestDto {
     name: string;
     description? : string;
+    createAsDistinct: boolean;
 }
 
 export const CreateItemRequestValidators = {
@@ -18,5 +19,6 @@ export const CreateItemRequestValidators = {
 
 export const CreateItemRequestDtoSchema = z.object({
     name: CreateItemRequestValidators.name,
-    description: z.string().optional()
+    description: z.string().optional(),
+    createAsDistinct: z.boolean(),
 });

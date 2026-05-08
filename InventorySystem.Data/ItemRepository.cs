@@ -1,5 +1,6 @@
 ﻿using InventorySystem.Data.Entities;
 using InventorySystem.Data.Models;
+using JasperFx.Descriptors;
 using Marten;
 
 namespace InventorySystem.Data;
@@ -107,6 +108,7 @@ public class ItemRepository
 			Id = item.Id,
 			Name = item.Name,
 			Description = item.Description,
+			Distinct = item.Distinct,
 			Attributes = [], // TODO: consolidate the making of Dtos to the attribute itself
 			CreatedUtc = item.CreatedUtc,
 			UpdatedUtc = item.UpdatedUtc

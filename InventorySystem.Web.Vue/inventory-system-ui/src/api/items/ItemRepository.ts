@@ -1,4 +1,4 @@
-import ky from 'ky'
+import ky from 'ky';
 import type { CreateItemRequestDto } from './dtos/CreateItemRequestDto';
 import { ItemDtoSchema, type ItemDto } from './dtos/ItemDto';
 import * as z from 'zod';
@@ -26,7 +26,7 @@ export function ItemRepository() {
             .then(res => {
                 const validatedResult = ItemDtoSchema.parse(res) as ItemDto;
                 return validatedResult;
-            })
+            });
     }
 
     return { GetItems, CreateItem }

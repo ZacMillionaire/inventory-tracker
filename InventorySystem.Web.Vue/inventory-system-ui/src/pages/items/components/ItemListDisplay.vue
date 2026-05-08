@@ -31,6 +31,10 @@ onMounted(async () => {
                                 <td>Description</td>
                                 <td>{{ item.description }}</td>
                             </tr>
+                            <tr>
+                                <td>Distinct</td>
+                                <td>{{ item.distinct }}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

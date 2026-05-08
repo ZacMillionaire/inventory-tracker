@@ -4,11 +4,13 @@ import * as z from 'zod';
 interface ItemDto extends BaseDto {
     name : string;
     description? : string;
+    distinct : boolean;
 }
 
 const ItemDtoSchema = BaseDtoSchema.extend({
     name: z.string(),
-    description: z.string().optional()
+    description: z.string().optional(),
+    distinct: z.boolean(),
 });
 
 export { type ItemDto, ItemDtoSchema}
