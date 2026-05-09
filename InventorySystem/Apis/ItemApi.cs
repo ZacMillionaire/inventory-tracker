@@ -1,6 +1,9 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using InventorySystem.Core.Api;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventorySystem.Apis;
@@ -13,11 +16,27 @@ public class ItemApiRoutes
 	public static async Task<List<ItemDto>> GetItems(ItemRepository repo) => await repo.Get();
 
 	[ApiPost("Create")]
-	public static async Task<ItemDto> CreateItem(ItemRepository repo, [FromBody] CreateItemRequestDto dto) => await repo.Create(dto);
+	public static async Task<Results<Ok<ItemDto>, BadRequest<Error>>> CreateItem(ItemRepository repo, [FromBody] CreateItemRequestDto dto)
+	{
+		try
+		{
+			return TypedResults.Ok(await repo.Create(dto));
+		}
+		catch (Exception ex)
+		{
+			return TypedResults.BadRequest(new Error() { Message = ex.Message });
+		}
+	}
 }
 
 [JsonSerializable(typeof(ItemDto))]
 [JsonSerializable(typeof(CreateItemRequestDto))]
 internal partial class ItemApiSerializerContext : JsonSerializerContext
 {
+}
+
+// TODO: fix the tests for this and make this class a bit better - I only hacked this in for some frontend stuff
+public class Error
+{
+	public required string Message { get; set; }
 }

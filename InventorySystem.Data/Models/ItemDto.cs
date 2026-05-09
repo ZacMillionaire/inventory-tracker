@@ -6,6 +6,7 @@ public class ItemDto : BaseDto
 {
 	public required string Name { get; set; }
 	public string? Description { get; set; }
+	public bool Distinct { get; set; }
 	public List<AttributeDto> Attributes { get; set; } = [];
 }
 
@@ -13,6 +14,7 @@ public class CreateItemRequestDto
 {
 	public required string Name { get; set; }
 	public string? Description { get; set; }
+	public bool CreateAsDistinct { get; set; }
 	public List<AttributeValueDto> AttributeValues { get; set; } = [];
 }
 

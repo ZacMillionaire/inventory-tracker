@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Net.Http.Headers;
 using Npgsql;
 
 namespace InventorySystem;
@@ -49,7 +50,7 @@ public class InventorySystemApi
 			// Ensure that types are always generated for development mode
 			options.Development.GeneratedCodeMode = TypeLoadMode.Auto;
 			options.Development.ResourceAutoCreate = AutoCreate.All;
-			
+
 			options.Production.GeneratedCodeMode = TypeLoadMode.Static;
 			options.Production.ResourceAutoCreate = AutoCreate.None;
 
@@ -68,6 +69,8 @@ public class InventorySystemApi
 		// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 		builder.Services.AddOpenApi();
 
+		ConfigureCors(builder.Services);
+
 		AddRepositories(builder.Services);
 
 		var app = builder.Build();
@@ -84,6 +87,20 @@ public class InventorySystemApi
 		app.Run();
 	}
 
+	private static void ConfigureCors(IServiceCollection services)
+	{
+		services.AddCors(opts =>
+		{
+			opts.AddPolicy("frontend", policyBuilder =>
+			{
+				policyBuilder.WithHeaders(HeaderNames.AccessControlAllowOrigin, HeaderNames.ContentType)
+					.WithMethods("GET", "POST", "OPTIONS")
+					// TODO: this should probably come from an environment variable
+					.WithOrigins("http://localhost:5173");
+			});
+		});
+	}
+
 	private static void AddRepositories(IServiceCollection services)
 	{
 		services.AddScoped<ItemRepository>();
@@ -93,6 +110,7 @@ public class InventorySystemApi
 
 	private static void MapApiRoutes(WebApplication app)
 	{
+		app.UseCors("frontend");
 		app.WithItemApiRoutes();
 		app.WithAttributeApiRoutes();
 	}

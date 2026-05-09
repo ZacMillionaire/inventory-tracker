@@ -1,5 +1,6 @@
 ﻿using InventorySystem.Data.Entities;
 using InventorySystem.Data.Models;
+using JasperFx.Descriptors;
 using Marten;
 
 namespace InventorySystem.Data;
@@ -25,19 +26,35 @@ public class ItemRepository
 		// };
 
 		// TODO: link attributes and create values
-		var newItem = await CreateAsyncImpl(new Item()
+		var newItem = await CreateItem(new Item()
 		{
 			Name = item.Name,
 			Description = item.Description,
 			CreatedUtc = _timeProvider.GetUtcNow(),
-			Id = Guid.CreateVersion7(_timeProvider.GetUtcNow())
+			Distinct = item.CreateAsDistinct,
+			Id = Guid.CreateVersion7(_timeProvider.GetUtcNow()),
 		});
 
 		return ToDto(newItem);
 	}
 
-	internal async Task<Item> CreateAsyncImpl(Item item)
+	/// <summary>
+	/// Creates an item
+	/// </summary>
+	/// <param name="item"></param>
+	/// <returns></returns>
+	/// <exception cref="Exception"></exception>
+	public async Task<Item> CreateItem(Item item)
 	{
+		item.NormalisedName = NormaliseItemName(item.Name);
+		
+		// Check if any item exists by the normalised name and is marked as distinct. Distinct items can (go figure)
+		// only exist once
+		if (await _documentSession.Query<Item>().AnyAsync(x => x.NormalisedName == item.NormalisedName && x.Distinct))
+		{
+			throw new Exception("Item already exists as distinct");
+		}
+
 		_documentSession.Store(item);
 
 		await _documentSession.SaveChangesAsync();
@@ -79,6 +96,11 @@ public class ItemRepository
 		// 	.ToList();
 	}
 
+	internal string NormaliseItemName(string itemName)
+	{
+		return itemName.ToUpperInvariant();
+	}
+
 	private ItemDto ToDto(Item item)
 	{
 		return new ItemDto()
@@ -86,6 +108,7 @@ public class ItemRepository
 			Id = item.Id,
 			Name = item.Name,
 			Description = item.Description,
+			Distinct = item.Distinct,
 			Attributes = [], // TODO: consolidate the making of Dtos to the attribute itself
 			CreatedUtc = item.CreatedUtc,
 			UpdatedUtc = item.UpdatedUtc

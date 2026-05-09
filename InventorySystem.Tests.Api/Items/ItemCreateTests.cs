@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Http.Json;
 using InventorySystem.Data;
 using InventorySystem.Data.Entities;
 using InventorySystem.Data.Models;
@@ -122,7 +123,32 @@ public sealed class ItemCreateTests : ApiTestBase
 		Assert.Equal(2, itemsListBody.Count);
 	}
 
-	// TODO: get by id, delete by id, maybe change the api to POST to items to create instead of items/create?
+	[Fact]
+	public async Task POST_CreateItemWithSameName_FirstDistinct_Should_BadRequest()
+	{
+		var timeProvider = new TestTimeProvider(DateTimeOffset.Now);
+
+		var client = ApiWebApplicationFactory
+			.Configure(config =>
+			{
+				config.TimeProvider = timeProvider;
+			})
+			.CreateClient();
+
+		await CreateItem("Item 1", "Created First", timeProvider, true);
+
+		// TODO: get by id, delete by id, maybe change the api to POST to items to create instead of items/create?
+		var response = await PostAsJsonAsync(client, "/items/create", new CreateItemRequestDto()
+		{
+			Name = "Item 1",
+			Description = "Created second"
+		});
+		Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+		// TypedResult turns the response body into json, and currently I just pass the exception message directly to it
+		// TODO: I should make the error response a class
+		Assert.Equal("Item already exists as distinct", await response.Content.ReadFromJsonAsync<string>(TestContext.Current.CancellationToken));
+	}
+
 
 	// TODO implement attributes first and redo this test
 	public async Task POST_CreateItemWithAttributes_Should_OK()
@@ -151,17 +177,18 @@ public sealed class ItemCreateTests : ApiTestBase
 		Assert.Null(body.UpdatedUtc);
 	}
 
-	private async Task<Item> CreateItem(string name, string description, TimeProvider timeProvider)
+	private async Task<Item> CreateItem(string name, string description, TimeProvider timeProvider, bool asDistinct = false)
 	{
 		await using var scope = ApiWebApplicationFactory.Services.CreateAsyncScope();
-		ItemRepository itemRepository = (ItemRepository)scope.ServiceProvider.GetRequiredService<ItemRepository>();
+		var itemRepository = scope.ServiceProvider.GetRequiredService<ItemRepository>();
 
-		var createdItem = await itemRepository.CreateAsyncImpl(new Item()
+		var createdItem = await itemRepository.CreateItem(new Item()
 		{
 			Name = name,
 			Description = description,
 			CreatedUtc = timeProvider.GetUtcNow(),
-			Id = Guid.CreateVersion7(timeProvider.GetUtcNow())
+			Distinct = asDistinct,
+			Id = Guid.CreateVersion7(timeProvider.GetUtcNow()),
 		});
 
 		return createdItem;
